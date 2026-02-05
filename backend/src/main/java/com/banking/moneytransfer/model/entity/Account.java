@@ -3,6 +3,7 @@ package com.banking.moneytransfer.model.entity;
 import com.banking.moneytransfer.exception.AccountNotActiveException;
 import com.banking.moneytransfer.exception.InsufficientBalanceException;
 import com.banking.moneytransfer.model.enums.AccountStatus;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,19 +13,35 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
- * Domain entity representing a bank account
+ * JPA Entity representing a bank account
  */
+@Entity
+@Table(name = "accounts")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class Account {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "holder_name", nullable = false)
     private String holderName;
+
+    @Column(nullable = false, precision = 18, scale = 2)
     private BigDecimal balance;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
     private AccountStatus status;
+
+    @Version
+    @Column(nullable = false)
     private Integer version;
+
+    @Column(name = "last_updated")
     private LocalDateTime lastUpdated;
 
     /**
@@ -73,5 +90,11 @@ public class Account {
      */
     public boolean isActive() {
         return AccountStatus.ACTIVE.equals(this.status);
+    }
+
+    @PrePersist
+    @PreUpdate
+    public void updateTimestamp() {
+        this.lastUpdated = LocalDateTime.now();
     }
 }
