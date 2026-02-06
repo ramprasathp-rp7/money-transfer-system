@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.HashMap;
@@ -27,47 +28,52 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(AccountNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleAccountNotFoundException(AccountNotFoundException ex,
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleAccountNotFoundException(AccountNotFoundException ex,
                                                                         HttpServletRequest request) {
         log.error("Account not found: {}", ex.getMessage());
-        ErrorResponse error = new ErrorResponse(ex.getErrorCode(), ex.getMessage(), request.getRequestURI());
-        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+
+        return new ErrorResponse(ex.getErrorCode(), ex.getMessage(), request.getRequestURI());
     }
 
     @ExceptionHandler(AccountNotActiveException.class)
-    public ResponseEntity<ErrorResponse> handleAccountNotActiveException(AccountNotActiveException ex,
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorResponse handleAccountNotActiveException(AccountNotActiveException ex,
                                                                          HttpServletRequest request) {
         log.error("Account not active: {}", ex.getMessage());
-        ErrorResponse error = new ErrorResponse(ex.getErrorCode(), ex.getMessage(), request.getRequestURI());
-        return new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
+
+        return new ErrorResponse(ex.getErrorCode(), ex.getMessage(), request.getRequestURI());
     }
 
     @ExceptionHandler(InsufficientBalanceException.class)
-    public ResponseEntity<ErrorResponse> handleInsufficientBalanceException(InsufficientBalanceException ex,
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleInsufficientBalanceException(InsufficientBalanceException ex,
                                                                             HttpServletRequest request) {
         log.error("Insufficient balance: {}", ex.getMessage());
-        ErrorResponse error = new ErrorResponse(ex.getErrorCode(), ex.getMessage(), request.getRequestURI());
-        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+
+        return new ErrorResponse(ex.getErrorCode(), ex.getMessage(), request.getRequestURI());
     }
 
     @ExceptionHandler(DuplicateTransferException.class)
-    public ResponseEntity<ErrorResponse> handleDuplicateTransferException(DuplicateTransferException ex,
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorResponse handleDuplicateTransferException(DuplicateTransferException ex,
                                                                           HttpServletRequest request) {
         log.error("Duplicate transfer: {}", ex.getMessage());
-        ErrorResponse error = new ErrorResponse(ex.getErrorCode(), ex.getMessage(), request.getRequestURI());
-        return new ResponseEntity<>(error, HttpStatus.CONFLICT);
+        return new ErrorResponse(ex.getErrorCode(), ex.getMessage(), request.getRequestURI());
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException ex,
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+    public ErrorResponse handleIllegalArgumentException(IllegalArgumentException ex,
                                                                         HttpServletRequest request) {
         log.error("Validation error: {}", ex.getMessage());
-        ErrorResponse error = new ErrorResponse(422, ex.getMessage(), request.getRequestURI());
-        return new ResponseEntity<>(error, HttpStatus.UNPROCESSABLE_ENTITY);
+
+        return new ErrorResponse(422, ex.getMessage(), request.getRequestURI());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> handleValidationExceptions(MethodArgumentNotValidException ex,
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+    public ErrorResponse handleValidationExceptions(MethodArgumentNotValidException ex,
                                                                     HttpServletRequest request) {
         Map<String, String> errors = new HashMap<>();
         ex.getBindingResult().getAllErrors().forEach(error -> {
@@ -77,15 +83,16 @@ public class GlobalExceptionHandler {
         });
 
         log.error("Validation errors: {}", errors);
-        ErrorResponse error = new ErrorResponse(422, ex.getMessage(), request.getRequestURI());
-        return new ResponseEntity<>(error, HttpStatus.UNPROCESSABLE_ENTITY);
+
+        return new ErrorResponse(422, ex.getMessage(), request.getRequestURI());
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleGenericException(Exception ex,
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse handleGenericException(Exception ex,
                                                                 HttpServletRequest request) {
         log.error("Unexpected error: {}", ex.getMessage(), ex);
-        ErrorResponse error = new ErrorResponse(500, ex.getMessage(), request.getRequestURI());
-        return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return new ErrorResponse(500, ex.getMessage(), request.getRequestURI());
     }
 }

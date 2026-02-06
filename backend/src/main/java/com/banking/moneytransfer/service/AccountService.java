@@ -1,5 +1,6 @@
 package com.banking.moneytransfer.service;
 
+import com.banking.moneytransfer.dto.AccountBalanceResponse;
 import com.banking.moneytransfer.dto.AccountResponse;
 import com.banking.moneytransfer.exception.AccountNotFoundException;
 import com.banking.moneytransfer.model.entity.Account;
@@ -48,13 +49,12 @@ public class AccountService {
      * @throws AccountNotFoundException if account not found
      */
     @Transactional(readOnly = true)
-    public BigDecimal getBalance(Long id) {
+    public AccountBalanceResponse getBalance(Long id) {
         log.info("Fetching balance for account ID: {}", id);
 
-        Account account = accountRepository.findById(id)
+        return accountRepository.findById(id)
+                .map(account -> new AccountBalanceResponse(account.getBalance()))
                 .orElseThrow(() -> new AccountNotFoundException(id));
-
-        return account.getBalance();
     }
 
     /**

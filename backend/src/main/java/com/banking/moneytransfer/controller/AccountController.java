@@ -1,5 +1,6 @@
 package com.banking.moneytransfer.controller;
 
+import com.banking.moneytransfer.dto.AccountBalanceResponse;
 import com.banking.moneytransfer.dto.AccountResponse;
 import com.banking.moneytransfer.model.entity.TransactionLog;
 import com.banking.moneytransfer.service.AccountService;
@@ -29,12 +30,10 @@ public class AccountController {
      * GET /api/v1/accounts/{id}
      */
     @GetMapping("/{id}")
-    public ResponseEntity<AccountResponse> getAccount(@PathVariable Long id) {
+    public AccountResponse getAccount(@PathVariable Long id) {
         log.info("Received request to get account with ID: {}", id);
 
-        AccountResponse response = accountService.getAccount(id);
-
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return accountService.getAccount(id);
     }
 
     /**
@@ -42,12 +41,10 @@ public class AccountController {
      * GET /api/v1/accounts/{id}/balance
      */
     @GetMapping("/{id}/balance")
-    public ResponseEntity<Map<String, BigDecimal>> getBalance(@PathVariable Long id) {
+    public AccountBalanceResponse getBalance(@PathVariable Long id) {
         log.info("Received request to get balance for account ID: {}", id);
 
-        BigDecimal balance = accountService.getBalance(id);
-
-        return new ResponseEntity<>(Map.of("balance", balance), HttpStatus.OK);
+        return accountService.getBalance(id);
     }
 
     /**
@@ -55,11 +52,9 @@ public class AccountController {
      * GET /api/v1/accounts/{id}/transactions
      */
     @GetMapping("/{id}/transactions")
-    public ResponseEntity<List<TransactionLog>> getTransactions(@PathVariable Long id) {
+    public List<TransactionLog> getTransactions(@PathVariable Long id) {
         log.info("Received request to get transactions for account ID: {}", id);
 
-        List<TransactionLog> transactions = accountService.getTransactions(id);
-
-        return new ResponseEntity<>(transactions, HttpStatus.OK);
+        return accountService.getTransactions(id);
     }
 }

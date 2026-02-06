@@ -26,12 +26,10 @@ public class TransferController {
      * POST /api/v1/transfers
      */
     @PostMapping
-    public ResponseEntity<TransferResponse> transfer(@Valid @RequestBody TransferRequest request) {
+    public TransferResponse transfer(@Valid @RequestBody TransferRequest request) {
         log.info("Received transfer request from account {} to account {}",
                 request.getFromAccountId(), request.getToAccountId());
 
-        TransferResponse response = transferService.transfer(request);
-
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return transferService.transfer(request);
     }
 }

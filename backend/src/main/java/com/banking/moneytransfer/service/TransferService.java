@@ -111,7 +111,7 @@ public class TransferService {
 
         // Build response
         return TransferResponse.builder()
-                .transactionId("TRX-" + transactionLog.getId())
+                .transactionId(transactionLog.getId().toString())
                 .status("SUCCESS")
                 .message("Transfer completed successfully")
                 .debitedFrom(request.getFromAccountId())
