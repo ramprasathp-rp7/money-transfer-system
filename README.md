@@ -1,13 +1,10 @@
 # Money Transfer System
 
-A production-grade digital money transfer microservice built progressively through training modules.
+A production-grade digital money transfer microservice.
 
 ## Project Overview
 
 **Project Type:** Enterprise Banking Microservice  
-**Duration:** 30 Hours (Per Participant)  
-**Approach:** Training-Aligned Progressive Build
-
 ## Technology Stack
 
 - **Version Control:** Git, GitHub
@@ -23,31 +20,6 @@ The system follows a microservices architecture with:
 - Single Page Application (SPA) frontend
 - MySQL for transactional data
 - Snowflake for analytics
-
-## Module Progression
-
-### ✅ Module 1: GIT (2 Hours)
-- Repository setup
-- Branching strategy
-- Project structure
-
-### 🔄 Module 2: Advanced Java (6 Hours)
-- Domain models
-- Business logic
-- Unit tests
-
-### ⏳ Module 3: Spring Boot (12 Hours)
-- REST APIs
-- Service layer
-- Security
-
-### ⏳ Module 4: Angular (8 Hours)
-- User interface
-- API integration
-
-### ⏳ Module 5: Snowflake (2 Hours)
-- Data warehouse
-- Analytics
 
 ## Project Structure
 
@@ -80,10 +52,6 @@ money-transfer-system/
 - `develop` - Integration branch
 - `feature/*` - Feature development branches
 
-## Contributing
-
-This is a training project. Follow the module-by-module approach.
-
 ## License
 
-Educational Project - Training Purpose
+Educational Project
