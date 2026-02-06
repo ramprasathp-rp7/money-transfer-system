@@ -5,13 +5,13 @@ package com.banking.moneytransfer.exception;
  */
 public class InsufficientBalanceException extends RuntimeException {
 
-    private final String errorCode = "TRX-400";
+    private static final int errorCode = 400;
 
     public InsufficientBalanceException(String message) {
         super(message);
     }
 
-    public String getErrorCode() {
+    public int getErrorCode() {
         return errorCode;
     }
 }

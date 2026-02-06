@@ -6,7 +6,7 @@ package com.banking.moneytransfer.exception;
  */
 public class DuplicateTransferException extends RuntimeException {
 
-    private final String errorCode = "TRX-409";
+    private static final int errorCode = 409;
 
     // Standard constructor for custom messages
     public DuplicateTransferException(String message) {
@@ -18,7 +18,7 @@ public class DuplicateTransferException extends RuntimeException {
         return new DuplicateTransferException("Duplicate transfer detected with idempotency key: " + idempotencyKey);
     }
 
-    public String getErrorCode() {
+    public int getErrorCode() {
         return errorCode;
     }
 }

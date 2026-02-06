@@ -5,13 +5,13 @@ package com.banking.moneytransfer.exception;
  */
 public class AccountNotActiveException extends RuntimeException {
 
-    private final String errorCode = "ACC-403";
+    private static final int errorCode = 403;
 
     public AccountNotActiveException(String message) {
         super(message);
     }
 
-    public String getErrorCode() {
+    public int getErrorCode() {
         return errorCode;
     }
 }

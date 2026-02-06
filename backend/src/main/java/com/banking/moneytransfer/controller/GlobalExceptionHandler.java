@@ -5,6 +5,7 @@ import com.banking.moneytransfer.exception.AccountNotActiveException;
 import com.banking.moneytransfer.exception.AccountNotFoundException;
 import com.banking.moneytransfer.exception.DuplicateTransferException;
 import com.banking.moneytransfer.exception.InsufficientBalanceException;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,47 +20,55 @@ import java.util.Map;
 /**
  * Global exception handler for all controllers
  */
-@RestControllerAdvice
+
+// basePackage property ensures handleGenericException method don't handle framework specific Exception.
+@RestControllerAdvice(basePackages = "com.banking.moneytransfer")
 @Slf4j
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(AccountNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleAccountNotFoundException(AccountNotFoundException ex) {
+    public ResponseEntity<ErrorResponse> handleAccountNotFoundException(AccountNotFoundException ex,
+                                                                        HttpServletRequest request) {
         log.error("Account not found: {}", ex.getMessage());
-        ErrorResponse error = new ErrorResponse(ex.getErrorCode(), ex.getMessage());
+        ErrorResponse error = new ErrorResponse(ex.getErrorCode(), ex.getMessage(), request.getRequestURI());
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(AccountNotActiveException.class)
-    public ResponseEntity<ErrorResponse> handleAccountNotActiveException(AccountNotActiveException ex) {
+    public ResponseEntity<ErrorResponse> handleAccountNotActiveException(AccountNotActiveException ex,
+                                                                         HttpServletRequest request) {
         log.error("Account not active: {}", ex.getMessage());
-        ErrorResponse error = new ErrorResponse(ex.getErrorCode(), ex.getMessage());
+        ErrorResponse error = new ErrorResponse(ex.getErrorCode(), ex.getMessage(), request.getRequestURI());
         return new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(InsufficientBalanceException.class)
-    public ResponseEntity<ErrorResponse> handleInsufficientBalanceException(InsufficientBalanceException ex) {
+    public ResponseEntity<ErrorResponse> handleInsufficientBalanceException(InsufficientBalanceException ex,
+                                                                            HttpServletRequest request) {
         log.error("Insufficient balance: {}", ex.getMessage());
-        ErrorResponse error = new ErrorResponse(ex.getErrorCode(), ex.getMessage());
+        ErrorResponse error = new ErrorResponse(ex.getErrorCode(), ex.getMessage(), request.getRequestURI());
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(DuplicateTransferException.class)
-    public ResponseEntity<ErrorResponse> handleDuplicateTransferException(DuplicateTransferException ex) {
+    public ResponseEntity<ErrorResponse> handleDuplicateTransferException(DuplicateTransferException ex,
+                                                                          HttpServletRequest request) {
         log.error("Duplicate transfer: {}", ex.getMessage());
-        ErrorResponse error = new ErrorResponse(ex.getErrorCode(), ex.getMessage());
+        ErrorResponse error = new ErrorResponse(ex.getErrorCode(), ex.getMessage(), request.getRequestURI());
         return new ResponseEntity<>(error, HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException ex) {
+    public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException ex,
+                                                                        HttpServletRequest request) {
         log.error("Validation error: {}", ex.getMessage());
-        ErrorResponse error = new ErrorResponse("VAL-422", ex.getMessage());
+        ErrorResponse error = new ErrorResponse(422, ex.getMessage(), request.getRequestURI());
         return new ResponseEntity<>(error, HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> handleValidationExceptions(MethodArgumentNotValidException ex) {
+    public ResponseEntity<ErrorResponse> handleValidationExceptions(MethodArgumentNotValidException ex,
+                                                                    HttpServletRequest request) {
         Map<String, String> errors = new HashMap<>();
         ex.getBindingResult().getAllErrors().forEach(error -> {
             String fieldName = ((FieldError) error).getField();
@@ -68,14 +77,15 @@ public class GlobalExceptionHandler {
         });
 
         log.error("Validation errors: {}", errors);
-        ErrorResponse error = new ErrorResponse("VAL-422", "Validation failed: " + errors);
+        ErrorResponse error = new ErrorResponse(422, ex.getMessage(), request.getRequestURI());
         return new ResponseEntity<>(error, HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleGenericException(Exception ex) {
+    public ResponseEntity<ErrorResponse> handleGenericException(Exception ex,
+                                                                HttpServletRequest request) {
         log.error("Unexpected error: {}", ex.getMessage(), ex);
-        ErrorResponse error = new ErrorResponse("ERR-500", "Internal server error occurred");
+        ErrorResponse error = new ErrorResponse(500, ex.getMessage(), request.getRequestURI());
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

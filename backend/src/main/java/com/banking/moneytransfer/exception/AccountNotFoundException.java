@@ -5,7 +5,7 @@ package com.banking.moneytransfer.exception;
  */
 public class AccountNotFoundException extends RuntimeException {
 
-    private final String errorCode = "ACC-404";
+    private static final int errorCode = 404;
 
     public AccountNotFoundException(String message) {
         super(message);
@@ -15,7 +15,7 @@ public class AccountNotFoundException extends RuntimeException {
         super("Account not found with ID: " + accountId);
     }
 
-    public String getErrorCode() {
+    public int getErrorCode() {
         return errorCode;
     }
 }
