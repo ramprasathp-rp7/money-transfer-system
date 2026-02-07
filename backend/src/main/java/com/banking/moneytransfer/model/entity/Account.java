@@ -33,6 +33,9 @@ public class Account {
     @Column(name = "holder_name", nullable = false)
     private String holderName;
 
+    @Column(name = "password_hash", nullable = false)
+    private String passwordHash;
+
     @Column(nullable = false, precision = 18, scale = 2)
     private BigDecimal balance;
 

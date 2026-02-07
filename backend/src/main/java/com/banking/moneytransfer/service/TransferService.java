@@ -9,8 +9,8 @@ import com.banking.moneytransfer.model.entity.TransactionLog;
 import com.banking.moneytransfer.model.enums.TransactionStatus;
 import com.banking.moneytransfer.repository.AccountRepository;
 import com.banking.moneytransfer.repository.TransactionLogRepository;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,12 +20,14 @@ import java.util.Optional;
  * Service class for fund transfer operations
  */
 @Service
-@RequiredArgsConstructor
 @Slf4j
 public class TransferService {
 
-    private final AccountRepository accountRepository;
-    private final TransactionLogRepository transactionLogRepository;
+    @Autowired
+    private AccountRepository accountRepository;
+
+    @Autowired
+    private TransactionLogRepository transactionLogRepository;
 
     /**
      * Execute fund transfer between accounts
