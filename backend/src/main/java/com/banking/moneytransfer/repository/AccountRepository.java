@@ -13,7 +13,7 @@ import java.util.Optional;
  * Repository interface for Account entity
  */
 @Repository
-public interface AccountRepository extends JpaRepository<Account, Long> {
+public interface AccountRepository extends JpaRepository<Account, String> {
 
     /**
      * Find account by ID with pessimistic write lock for concurrency control
@@ -22,5 +22,5 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
      */
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT a FROM Account a WHERE a.id = :id")
-    Optional<Account> findByIdWithLock(Long id);
+    Optional<Account> findByIdWithLock(String id);
 }

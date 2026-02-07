@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 @Builder
 public class AccountResponse {
 
-    private Long id;
+    private String id;
     private String holderName;
     private BigDecimal balance;
     private String status;

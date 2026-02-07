@@ -7,11 +7,7 @@ public class AccountNotFoundException extends RuntimeException {
 
     private static final int errorCode = 404;
 
-    public AccountNotFoundException(String message) {
-        super(message);
-    }
-
-    public AccountNotFoundException(Long accountId) {
+    public AccountNotFoundException(String accountId) {
         super("Account not found with ID: " + accountId);
     }
 

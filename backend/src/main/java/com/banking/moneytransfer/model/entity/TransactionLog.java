@@ -39,13 +39,13 @@ public class TransactionLog {
     private BigDecimal amount;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false)
     private TransactionStatus status;
 
     @Column(name = "failure_reason")
     private String failureReason;
 
-    @Column(name = "idempotency_key", nullable = false, unique = true, length = 100)
+    @Column(name = "idempotency_key", nullable = false, unique = true, length = 36)
     private String idempotencyKey;
 
     @CreationTimestamp

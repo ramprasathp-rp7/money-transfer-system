@@ -6,13 +6,9 @@ import com.banking.moneytransfer.model.entity.TransactionLog;
 import com.banking.moneytransfer.service.AccountService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
 import java.util.List;
-import java.util.Map;
 
 /**
  * REST Controller for account operations
@@ -30,7 +26,7 @@ public class AccountController {
      * GET /api/v1/accounts/{id}
      */
     @GetMapping("/{id}")
-    public AccountResponse getAccount(@PathVariable Long id) {
+    public AccountResponse getAccount(@PathVariable String id) {
         log.info("Received request to get account with ID: {}", id);
 
         return accountService.getAccount(id);
@@ -41,7 +37,7 @@ public class AccountController {
      * GET /api/v1/accounts/{id}/balance
      */
     @GetMapping("/{id}/balance")
-    public AccountBalanceResponse getBalance(@PathVariable Long id) {
+    public AccountBalanceResponse getBalance(@PathVariable String id) {
         log.info("Received request to get balance for account ID: {}", id);
 
         return accountService.getBalance(id);
@@ -52,7 +48,7 @@ public class AccountController {
      * GET /api/v1/accounts/{id}/transactions
      */
     @GetMapping("/{id}/transactions")
-    public List<TransactionLog> getTransactions(@PathVariable Long id) {
+    public List<TransactionLog> getTransactions(@PathVariable String id) {
         log.info("Received request to get transactions for account ID: {}", id);
 
         return accountService.getTransactions(id);

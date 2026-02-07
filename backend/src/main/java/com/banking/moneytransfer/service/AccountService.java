@@ -12,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -25,7 +24,6 @@ import java.util.stream.Stream;
 public class AccountService {
 
     private final AccountRepository accountRepository;
-    private final TransactionLogRepository transactionLogRepository;
 
     /**
      * Get account by ID
@@ -34,7 +32,7 @@ public class AccountService {
      * @throws AccountNotFoundException if account not found
      */
     @Transactional(readOnly = true)
-    public AccountResponse getAccount(Long id) {
+    public AccountResponse getAccount(String id) {
         log.info("Fetching account with ID: {}", id);
 
         Account account = accountRepository.findById(id)
@@ -50,7 +48,7 @@ public class AccountService {
      * @throws AccountNotFoundException if account not found
      */
     @Transactional(readOnly = true)
-    public AccountBalanceResponse getBalance(Long id) {
+    public AccountBalanceResponse getBalance(String id) {
         log.info("Fetching balance for account ID: {}", id);
 
         return accountRepository.findById(id)
@@ -65,7 +63,7 @@ public class AccountService {
      * @throws AccountNotFoundException if account not found
      */
     @Transactional(readOnly = true)
-    public List<TransactionLog> getTransactions(Long id) {
+    public List<TransactionLog> getTransactions(String id) {
         log.info("Fetching transactions for account ID: {}", id);
 
         // Verify account exists

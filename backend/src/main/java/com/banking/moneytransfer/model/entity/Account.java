@@ -27,8 +27,8 @@ import java.util.List;
 public class Account {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(length = 16)
+    private String id;
 
     @Column(name = "holder_name", nullable = false)
     private String holderName;
@@ -37,7 +37,7 @@ public class Account {
     private BigDecimal balance;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false)
     private AccountStatus status;
 
     @Version
@@ -45,7 +45,7 @@ public class Account {
     private Integer version;
 
     @UpdateTimestamp
-    @Column(name = "last_updated")
+    @Column(name = "last_updated", nullable = false)
     private LocalDateTime lastUpdated;
 
     @JsonIgnore

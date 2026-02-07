@@ -1,12 +1,12 @@
 -- Seed Data for Money Transfer System
 
 CREATE TABLE IF NOT EXISTS accounts (
-    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    id VARCHAR(16) PRIMARY KEY,
     holder_name VARCHAR(255) NOT NULL,
     balance DECIMAL(18,2) NOT NULL,
     status ENUM('ACTIVE', 'CLOSED', 'LOCKED') NOT NULL,
     version INT DEFAULT 0 NOT NULL,
-    last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL
 );
 
 -- Transaction Logs Table
@@ -31,11 +31,11 @@ SET FOREIGN_KEY_CHECKS = 1;
 
 -- Insert sample accounts
 INSERT INTO accounts (id, holder_name, balance, status, version, last_updated) VALUES
-(101, 'John Doe', 10000.00, 'ACTIVE', 0, NOW()),
-(102, 'Jane Smith', 5000.00, 'ACTIVE', 0, NOW()),
-(103, 'Bob Johnson', 15000.00, 'ACTIVE', 0, NOW()),
-(104, 'Alice Williams', 8000.00, 'ACTIVE', 0, NOW()),
-(105, 'Charlie Brown', 12000.00, 'LOCKED', 0, NOW()),
-(106, 'Diana Prince', 20000.00, 'ACTIVE', 0, NOW()),
-(107, 'Eve Davis', 3000.00, 'CLOSED', 0, NOW()),
-(108, 'Frank Miller', 7500.00, 'ACTIVE', 0, NOW());
+('1000-1000-1001', 'John Doe', 10000.00, 'ACTIVE', 0, NOW()),
+('1000-1000-1002', 'Jane Smith', 5000.00, 'ACTIVE', 0, NOW()),
+('1000-1000-1003', 'Bob Johnson', 15000.00, 'ACTIVE', 0, NOW()),
+('1000-1000-1004', 'Alice Williams', 8000.00, 'ACTIVE', 0, NOW()),
+('1000-1000-1005', 'Charlie Brown', 12000.00, 'LOCKED', 0, NOW()),
+('1000-1000-1006', 'Diana Prince', 20000.00, 'ACTIVE', 0, NOW()),
+('1000-1000-1007', 'Eve Davis', 3000.00, 'CLOSED', 0, NOW()),
+('1000-1000-1008', 'Frank Miller', 7500.00, 'ACTIVE', 0, NOW());
