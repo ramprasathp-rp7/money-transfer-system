@@ -7,14 +7,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.GenericGenerator;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
-
-import org.hibernate.annotations.JdbcTypeCode;
-import java.sql.Types;
 
 /**
  * JPA Entity representing a transaction log
@@ -31,11 +27,13 @@ public class TransactionLog {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(name = "from_account", nullable = false)
-    private Long fromAccountId;
+    @ManyToOne(optional = false, targetEntity = Account.class)
+    @JoinColumn(name = "from_account", nullable = false)
+    private Account fromAccount;
 
-    @Column(name = "to_account", nullable = false)
-    private Long toAccountId;
+    @ManyToOne(optional = false, targetEntity = Account.class)
+    @JoinColumn(name = "to_account", nullable = false)
+    private Account toAccount;
 
     @Column(nullable = false, precision = 18, scale = 2)
     private BigDecimal amount;

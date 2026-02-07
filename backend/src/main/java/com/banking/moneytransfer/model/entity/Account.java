@@ -3,6 +3,7 @@ package com.banking.moneytransfer.model.entity;
 import com.banking.moneytransfer.exception.AccountNotActiveException;
 import com.banking.moneytransfer.exception.InsufficientBalanceException;
 import com.banking.moneytransfer.model.enums.AccountStatus;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,6 +13,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * JPA Entity representing a bank account
@@ -45,6 +47,14 @@ public class Account {
     @UpdateTimestamp
     @Column(name = "last_updated")
     private LocalDateTime lastUpdated;
+
+    @JsonIgnore
+    @OneToMany(targetEntity = TransactionLog.class, mappedBy = "fromAccount")
+    private List<TransactionLog> sentTransactions;
+
+    @JsonIgnore
+    @OneToMany(targetEntity = TransactionLog.class, mappedBy = "toAccount")
+    private List<TransactionLog> receivedTransactions;
 
     /**
      * Debit amount from the account

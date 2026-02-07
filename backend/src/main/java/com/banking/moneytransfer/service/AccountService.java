@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * Service class for account operations
@@ -68,11 +69,11 @@ public class AccountService {
         log.info("Fetching transactions for account ID: {}", id);
 
         // Verify account exists
-        if (!accountRepository.existsById(id)) {
-            throw new AccountNotFoundException(id);
-        }
+        Account account = accountRepository.findById(id)
+                .orElseThrow(() -> new AccountNotFoundException(id));
 
-        return transactionLogRepository.findByFromAccountIdOrToAccountIdOrderByCreatedOnDesc(id, id);
+        return Stream.concat(account.getSentTransactions().stream(), account.getReceivedTransactions().stream())
+                     .toList();
     }
 
     /**

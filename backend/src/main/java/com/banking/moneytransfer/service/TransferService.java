@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
-import java.util.UUID;
 
 /**
  * Service class for fund transfer operations
@@ -30,6 +29,7 @@ public class TransferService {
 
     /**
      * Execute fund transfer between accounts
+     *
      * @param request Transfer request
      * @return TransferResponse
      */
@@ -45,16 +45,7 @@ public class TransferService {
         checkDuplicateTransfer(request.getIdempotencyKey());
 
         // Execute transfer
-        try {
-            return executeTransfer(request);
-        } catch (Exception e) {
-            log.error("Transfer failed: {}", e.getMessage());
-
-            // Log failed transaction
-            logFailedTransaction(request, e.getMessage());
-
-            throw e;
-        }
+        return executeTransfer(request);
     }
 
     /**
@@ -105,7 +96,16 @@ public class TransferService {
         accountRepository.save(toAccount);
 
         // Rule 10: Log transaction
-        TransactionLog transactionLog = logSuccessfulTransaction(request);
+        TransactionLog transactionLog = TransactionLog.builder()
+                .fromAccount(fromAccount)
+                .toAccount(toAccount)
+                .amount(request.getAmount())
+                .status(TransactionStatus.SUCCESS)
+                .idempotencyKey(request.getIdempotencyKey())
+                .build();
+
+        // Save transactionLog
+        transactionLog = transactionLogRepository.save(transactionLog);
 
         log.info("Transfer completed successfully. Transaction ID: {}", transactionLog.getId());
 
@@ -118,36 +118,5 @@ public class TransferService {
                 .creditedTo(request.getToAccountId())
                 .amount(request.getAmount())
                 .build();
-    }
-
-    /**
-     * Log successful transaction
-     */
-    private TransactionLog logSuccessfulTransaction(TransferRequest request) {
-        TransactionLog log = TransactionLog.builder()
-                .fromAccountId(request.getFromAccountId())
-                .toAccountId(request.getToAccountId())
-                .amount(request.getAmount())
-                .status(TransactionStatus.SUCCESS)
-                .idempotencyKey(request.getIdempotencyKey())
-                .build();
-
-        return transactionLogRepository.save(log);
-    }
-
-    /**
-     * Log failed transaction
-     */
-    private void logFailedTransaction(TransferRequest request, String failureReason) {
-        TransactionLog log = TransactionLog.builder()
-                .fromAccountId(request.getFromAccountId())
-                .toAccountId(request.getToAccountId())
-                .amount(request.getAmount())
-                .status(TransactionStatus.FAILED)
-                .failureReason(failureReason)
-                .idempotencyKey(request.getIdempotencyKey())
-                .build();
-
-        transactionLogRepository.save(log);
     }
 }

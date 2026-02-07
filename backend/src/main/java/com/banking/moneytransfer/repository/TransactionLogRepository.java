@@ -20,13 +20,4 @@ public interface TransactionLogRepository extends JpaRepository<TransactionLog, 
      * @return Optional TransactionLog
      */
     Optional<TransactionLog> findByIdempotencyKey(String idempotencyKey);
-
-    /**
-     * Find all transactions for a specific account (either from or to)
-     * @param accountId Account ID
-     * @return List of transactions
-     */
-    List<TransactionLog> findByFromAccountIdOrToAccountIdOrderByCreatedOnDesc(
-            Long accountId, Long accountId2
-    );
 }
