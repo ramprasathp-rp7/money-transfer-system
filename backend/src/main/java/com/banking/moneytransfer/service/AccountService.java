@@ -2,16 +2,17 @@ package com.banking.moneytransfer.service;
 
 import com.banking.moneytransfer.dto.AccountBalanceResponse;
 import com.banking.moneytransfer.dto.AccountResponse;
+import com.banking.moneytransfer.dto.TransactionLogResponse;
 import com.banking.moneytransfer.exception.AccountNotFoundException;
 import com.banking.moneytransfer.model.entity.Account;
-import com.banking.moneytransfer.model.entity.TransactionLog;
+import com.banking.moneytransfer.model.enums.TransactionType;
 import com.banking.moneytransfer.repository.AccountRepository;
-import com.banking.moneytransfer.repository.TransactionLogRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -27,6 +28,7 @@ public class AccountService {
 
     /**
      * Get account by ID
+     *
      * @param id Account ID
      * @return AccountResponse
      * @throws AccountNotFoundException if account not found
@@ -43,6 +45,7 @@ public class AccountService {
 
     /**
      * Get account balance
+     *
      * @param id Account ID
      * @return Account balance
      * @throws AccountNotFoundException if account not found
@@ -58,20 +61,45 @@ public class AccountService {
 
     /**
      * Get transaction history for an account
+     *
      * @param id Account ID
-     * @return List of transactions
+     * @return List of transactions (order by createdOn)
      * @throws AccountNotFoundException if account not found
      */
     @Transactional(readOnly = true)
-    public List<TransactionLog> getTransactions(String id) {
+    public List<TransactionLogResponse> getTransactions(String id) {
         log.info("Fetching transactions for account ID: {}", id);
 
         // Verify account exists
         Account account = accountRepository.findById(id)
                 .orElseThrow(() -> new AccountNotFoundException(id));
 
-        return Stream.concat(account.getSentTransactions().stream(), account.getReceivedTransactions().stream())
-                     .toList();
+        // List send and receive transaction, map to TransactionLogResponse object, and
+        // Sort by CreateOn timestamp (newest to oldest)
+        return Stream.concat(
+                        account.getSentTransactions()
+                                .stream()
+                                .map(t -> TransactionLogResponse.builder()
+                                        .accountId(t.getToAccount().getId())
+                                        .holderName(t.getToAccount().getHolderName())
+                                        .type(TransactionType.SEND)
+                                        .status(t.getStatus())
+                                        .amount(t.getAmount())
+                                        .createdOn(t.getCreatedOn())
+                                        .build()),
+                        account.getReceivedTransactions()
+                                .stream()
+                                .map(t -> TransactionLogResponse.builder()
+                                        .accountId(t.getFromAccount().getId())
+                                        .holderName(t.getFromAccount().getHolderName())
+                                        .type(TransactionType.RECEIVE)
+                                        .status(t.getStatus())
+                                        .amount(t.getAmount())
+                                        .createdOn(t.getCreatedOn())
+                                        .build())
+                )
+                .sorted(Comparator.comparing(TransactionLogResponse::getCreatedOn).reversed())
+                .toList();
     }
 
     /**

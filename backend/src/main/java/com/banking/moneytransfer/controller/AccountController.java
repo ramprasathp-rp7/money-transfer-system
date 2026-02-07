@@ -2,7 +2,7 @@ package com.banking.moneytransfer.controller;
 
 import com.banking.moneytransfer.dto.AccountBalanceResponse;
 import com.banking.moneytransfer.dto.AccountResponse;
-import com.banking.moneytransfer.model.entity.TransactionLog;
+import com.banking.moneytransfer.dto.TransactionLogResponse;
 import com.banking.moneytransfer.service.AccountService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -48,7 +48,7 @@ public class AccountController {
      * GET /api/v1/accounts/{id}/transactions
      */
     @GetMapping("/{id}/transactions")
-    public List<TransactionLog> getTransactions(@PathVariable String id) {
+    public List<TransactionLogResponse> getTransactions(@PathVariable String id) {
         log.info("Received request to get transactions for account ID: {}", id);
 
         return accountService.getTransactions(id);
