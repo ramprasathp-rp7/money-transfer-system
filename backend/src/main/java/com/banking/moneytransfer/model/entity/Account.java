@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -41,6 +42,7 @@ public class Account {
     @Column(nullable = false)
     private Integer version;
 
+    @UpdateTimestamp
     @Column(name = "last_updated")
     private LocalDateTime lastUpdated;
 
@@ -90,11 +92,5 @@ public class Account {
      */
     public boolean isActive() {
         return AccountStatus.ACTIVE.equals(this.status);
-    }
-
-    @PrePersist
-    @PreUpdate
-    public void updateTimestamp() {
-        this.lastUpdated = LocalDateTime.now();
     }
 }

@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.math.BigDecimal;
@@ -27,10 +28,7 @@ import java.sql.Types;
 public class TransactionLog {
 
     @Id
-    @JdbcTypeCode(Types.VARCHAR) // Add this line!
-    @GeneratedValue(generator = "uuid2")
-    @GenericGenerator(name = "uuid2", strategy = "uuid2")
-    @Column(columnDefinition = "VARCHAR(36)")
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @Column(name = "from_account", nullable = false)
@@ -52,16 +50,7 @@ public class TransactionLog {
     @Column(name = "idempotency_key", nullable = false, unique = true, length = 100)
     private String idempotencyKey;
 
+    @CreationTimestamp
     @Column(name = "created_on", nullable = false)
     private LocalDateTime createdOn;
-
-    @PrePersist
-    public void prePersist() {
-        if (this.createdOn == null) {
-            this.createdOn = LocalDateTime.now();
-        }
-        if (this.id == null) {
-            this.id = UUID.randomUUID();
-        }
-    }
 }
