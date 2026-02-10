@@ -8,7 +8,7 @@ import com.banking.moneytransfer.exception.InsufficientBalanceException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -85,6 +85,15 @@ public class GlobalExceptionHandler {
         log.error("Validation errors: {}", errors);
 
         return new ErrorResponse(422, ex.getMessage(), request.getRequestURI());
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ErrorResponse handleAccessDeniedException(Exception ex,
+                                                HttpServletRequest request) {
+        log.error("Access denied: {}", ex.getMessage(), ex);
+
+        return new ErrorResponse(401, ex.getMessage(), request.getRequestURI());
     }
 
     @ExceptionHandler(Exception.class)
