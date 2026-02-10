@@ -21,5 +21,6 @@ public class TransactionLogResponse {
     private String holderName;
     private BigDecimal amount;
     private TransactionStatus status;
+    private String failureReason;
     private LocalDateTime createdOn;
 }

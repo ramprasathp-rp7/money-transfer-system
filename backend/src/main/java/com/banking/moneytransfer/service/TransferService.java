@@ -4,6 +4,8 @@ import com.banking.moneytransfer.dto.TransferRequest;
 import com.banking.moneytransfer.dto.TransferResponse;
 import com.banking.moneytransfer.exception.AccountNotFoundException;
 import com.banking.moneytransfer.exception.DuplicateTransferException;
+import com.banking.moneytransfer.exception.AccountNotActiveException;
+import com.banking.moneytransfer.exception.InsufficientBalanceException;
 import com.banking.moneytransfer.model.entity.Account;
 import com.banking.moneytransfer.model.entity.TransactionLog;
 import com.banking.moneytransfer.model.enums.TransactionStatus;
@@ -13,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.banking.moneytransfer.service.TransactionLoggingService;
 
 import java.util.Optional;
 
@@ -28,6 +31,9 @@ public class TransferService {
 
     @Autowired
     private TransactionLogRepository transactionLogRepository;
+
+    @Autowired
+    private TransactionLoggingService loggingService; // Inject the new helper
 
     /**
      * Execute fund transfer between accounts
@@ -83,42 +89,60 @@ public class TransferService {
      */
     private TransferResponse executeTransfer(TransferRequest request) {
         // Fetch and lock accounts (pessimistic locking for concurrency control)
-        Account fromAccount = accountRepository.findByIdWithLock(request.getFromAccountId())
+        Account fromAccount = accountRepository.findById(request.getFromAccountId())
                 .orElseThrow(() -> new AccountNotFoundException(request.getFromAccountId()));
 
-        Account toAccount = accountRepository.findByIdWithLock(request.getToAccountId())
+        Account toAccount = accountRepository.findById(request.getToAccountId())
                 .orElseThrow(() -> new AccountNotFoundException(request.getToAccountId()));
 
-        // Rule 9: Debit before credit
-        fromAccount.debit(request.getAmount());
-        toAccount.credit(request.getAmount());
+        try {
+            // Rule 9: Debit before credit
+            fromAccount.debit(request.getAmount());
+            toAccount.credit(request.getAmount());
 
-        // Save accounts
-        accountRepository.save(fromAccount);
-        accountRepository.save(toAccount);
+            // Save accounts
+            accountRepository.save(fromAccount);
+            accountRepository.save(toAccount);
 
-        // Rule 10: Log transaction
-        TransactionLog transactionLog = TransactionLog.builder()
-                .fromAccount(fromAccount)
-                .toAccount(toAccount)
-                .amount(request.getAmount())
-                .status(TransactionStatus.SUCCESS)
-                .idempotencyKey(request.getIdempotencyKey())
-                .build();
+            // Rule 10: Log transaction
+            TransactionLog transactionLog = TransactionLog.builder()
+                    .fromAccount(fromAccount)
+                    .toAccount(toAccount)
+                    .amount(request.getAmount())
+                    .status(TransactionStatus.SUCCESS)
+                    .idempotencyKey(request.getIdempotencyKey())
+                    .build();
 
-        // Save transactionLog
-        transactionLog = transactionLogRepository.save(transactionLog);
+            // Save transactionLog
+            transactionLog = transactionLogRepository.save(transactionLog);
 
-        log.info("Transfer completed successfully. Transaction ID: {}", transactionLog.getId());
+            log.info("Transfer completed successfully. Transaction ID: {}", transactionLog.getId());
 
-        // Build response
-        return TransferResponse.builder()
-                .transactionId(transactionLog.getId().toString())
-                .status("SUCCESS")
-                .message("Transfer completed successfully")
-                .debitedFrom(request.getFromAccountId())
-                .creditedTo(request.getToAccountId())
-                .amount(request.getAmount())
-                .build();
+            // Build response
+            return TransferResponse.builder()
+                    .transactionId(transactionLog.getId().toString())
+                    .status("SUCCESS")
+                    .message("Transfer completed successfully")
+                    .debitedFrom(request.getFromAccountId())
+                    .creditedTo(request.getToAccountId())
+                    .amount(request.getAmount())
+                    .build();
+        } catch (AccountNotActiveException | InsufficientBalanceException e) {
+            // 6. Failure Path: Log Failure (in a new transaction)
+            log.error("Transfer failed: {}", e.getMessage());
+
+            TransactionLog failedLog = TransactionLog.builder()
+                    .fromAccount(fromAccount)
+                    .toAccount(toAccount)
+                    .amount(request.getAmount())
+                    .status(TransactionStatus.FAILED)
+                    .failureReason(e.getMessage())
+                    .idempotencyKey(request.getIdempotencyKey())
+                    .build();
+            loggingService.saveLog(failedLog);
+
+            // 7. RETHROW the exception so GlobalExceptionHandler sends the correct HTTP response
+            throw e;
+        }
     }
 }

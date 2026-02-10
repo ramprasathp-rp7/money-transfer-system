@@ -94,6 +94,7 @@ public class AccountService {
                                         .holderName(t.getToAccount().getHolderName())
                                         .type(TransactionType.SEND)
                                         .status(t.getStatus())
+                                        .failureReason(t.getFailureReason())
                                         .amount(t.getAmount())
                                         .createdOn(t.getCreatedOn())
                                         .build()),
@@ -104,6 +105,7 @@ public class AccountService {
                                         .holderName(t.getFromAccount().getHolderName())
                                         .type(TransactionType.RECEIVE)
                                         .status(t.getStatus())
+                                        .failureReason(t.getFailureReason())
                                         .amount(t.getAmount())
                                         .createdOn(t.getCreatedOn())
                                         .build())
