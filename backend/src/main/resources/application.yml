@@ -40,5 +40,8 @@ logging:
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
 
+cors:
+  allow-origin: "http://localhost:4200"
+
 dummy:
   enable: true
