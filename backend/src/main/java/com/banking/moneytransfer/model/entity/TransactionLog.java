@@ -2,10 +2,7 @@ package com.banking.moneytransfer.model.entity;
 
 import com.banking.moneytransfer.model.enums.TransactionStatus;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
@@ -17,9 +14,9 @@ import java.util.UUID;
  */
 @Entity
 @Table(name = "transaction_logs")
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter @Setter
 @Builder
 public class TransactionLog {
 

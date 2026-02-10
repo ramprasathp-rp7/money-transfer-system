@@ -5,10 +5,7 @@ import com.banking.moneytransfer.exception.InsufficientBalanceException;
 import com.banking.moneytransfer.model.enums.AccountStatus;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
@@ -20,9 +17,9 @@ import java.util.List;
  */
 @Entity
 @Table(name = "accounts")
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter @Setter
 @Builder
 public class Account {
 
