@@ -25,6 +25,7 @@ public class TransferController {
      * Execute fund transfer
      * POST /api/v1/transfers
      */
+    @PreAuthorize("#request.fromAccountId == authentication.name")
     @PostMapping
     public TransferResponse transfer(@Valid @RequestBody TransferRequest request) {
         log.info("Received transfer request from account {} to account {}",
