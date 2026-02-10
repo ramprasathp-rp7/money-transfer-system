@@ -1,0 +1,134 @@
+<div class="card shadow-sm border-0">
+  <div class="card-header bg-white border-bottom py-3">
+    <div class="d-flex justify-content-between align-items-center">
+      <h2 class="h5 mb-0 fw-bold text-dark">Recent Transactions</h2>
+      <div class="d-flex align-items-center gap-2">
+        <!-- Filter Button with Nested Menu -->
+        <div class="position-relative">
+          <button
+            class="btn btn-sm btn-light border rounded-pill px-3 fw-medium d-flex align-items-center gap-2 shadow-sm"
+            (click)="toggleFilterMenu()">
+            <i class="bi bi-filter"></i> Filter
+            <span *ngIf="selectedStatusFilters().length + selectedTypeFilters().length > 0"
+              class="badge bg-primary rounded-pill small ms-1">
+              {{ selectedStatusFilters().length + selectedTypeFilters().length }}
+            </span>
+          </button>
+
+          <!-- Nested Filter Menu -->
+          <div *ngIf="isFilterMenuOpen()" class="filter-dropdown shadow-lg rounded-3 border bg-white mt-2 fadeIn">
+            <div class="d-flex" style="min-width: 400px; min-height: 250px;">
+              <!-- Left Sidebar: Categories -->
+              <div class="filter-sidebar bg-light border-end p-0" style="width: 150px;">
+                <button
+                  class="filter-cat-btn w-100 text-start py-3 px-3 d-flex justify-content-between align-items-center border-0"
+                  [class.active]="activeFilterCategory() === 'Status'" (click)="setFilterCategory('Status')">
+                  Status <i class="bi bi-chevron-right small opacity-50"></i>
+                </button>
+                <button
+                  class="filter-cat-btn w-100 text-start py-3 px-3 d-flex justify-content-between align-items-center border-0"
+                  [class.active]="activeFilterCategory() === 'Type'" (click)="setFilterCategory('Type')">
+                  Type <i class="bi bi-chevron-right small opacity-50"></i>
+                </button>
+              </div>
+
+              <!-- Right Pane: Options -->
+              <div class="filter-options flex-grow-1 p-3">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <span class="text-uppercase small fw-bold text-muted">{{ activeFilterCategory() }}</span>
+                  <button class="btn btn-link btn-sm p-0 text-decoration-none small"
+                    (click)="clearFilters()">Clear</button>
+                </div>
+
+                <!-- Status Options -->
+                <div *ngIf="activeFilterCategory() === 'Status'" class="d-flex flex-column gap-2">
+                  <label class="filter-option d-flex align-items-center gap-2 p-2 rounded">
+                    <input type="checkbox" [checked]="selectedStatusFilters().includes('SUCCESS')"
+                      (change)="toggleStatusFilter('SUCCESS')">
+                    Success
+                  </label>
+                  <label class="filter-option d-flex align-items-center gap-2 p-2 rounded">
+                    <input type="checkbox" [checked]="selectedStatusFilters().includes('FAILURE')"
+                      (change)="toggleStatusFilter('FAILURE')">
+                    Failure
+                  </label>
+                  <label class="filter-option d-flex align-items-center gap-2 p-2 rounded">
+                    <input type="checkbox" [checked]="selectedStatusFilters().includes('PENDING')"
+                      (change)="toggleStatusFilter('PENDING')">
+                    Pending
+                  </label>
+                </div>
+
+                <!-- Type Options -->
+                <div *ngIf="activeFilterCategory() === 'Type'" class="d-flex flex-column gap-2">
+                  <label class="filter-option d-flex align-items-center gap-2 p-2 rounded">
+                    <input type="checkbox" [checked]="selectedTypeFilters().includes('SEND')"
+                      (change)="toggleTypeFilter('SEND')">
+                    Paid
+                  </label>
+                  <label class="filter-option d-flex align-items-center gap-2 p-2 rounded">
+                    <input type="checkbox" [checked]="selectedTypeFilters().includes('RECEIVE')"
+                      (change)="toggleTypeFilter('RECEIVE')">
+                    Received
+                  </label>
+                </div>
+              </div>
+            </div>
+            <!-- Footer -->
+            <div class="border-top p-2 text-end">
+              <button class="btn btn-primary btn-sm px-4 rounded-pill" (click)="toggleFilterMenu()">Done</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="card-body p-0">
+    <div *ngIf="errorMessage()" class="alert alert-danger m-3 shadow-sm border-start border-4">
+      <i class="bi bi-exclamation-circle-fill me-2"></i>{{ errorMessage() }}
+    </div>
+
+    <div class="list-group list-group-flush" *ngIf="transactions().length > 0">
+      <div *ngFor="let transaction of transactions()"
+        class="list-group-item list-group-item-action py-3 px-4 border-0 border-bottom">
+        <div class="d-flex align-items-center">
+          <!-- Circular Avatar with First Letter -->
+          <div
+            class="avatar-circle me-3 flex-shrink-0 d-flex align-items-center justify-content-center text-white fw-bold shadow-sm"
+            [ngClass]="transaction.type === 'RECEIVE' ? 'bg-success bg-gradient' : 'bg-primary bg-gradient'">
+            {{ transaction.holderName.charAt(0).toUpperCase() }}
+          </div>
+
+          <!-- Recipient/Sender Name and Status Message -->
+          <div class="flex-grow-1">
+            <div class="d-flex justify-content-between align-items-center">
+              <h6 class="mb-0 fw-bold text-dark fs-6">{{ transaction.holderName }}</h6>
+              <!-- Amount with +/- and Color -->
+              <div class="fw-bold fs-5" [ngClass]="transaction.type === 'RECEIVE' ? 'text-success' : 'text-danger'">
+                {{ transaction.type === 'RECEIVE' ? '+' : '-' }}{{ transaction.amount | currency }}
+              </div>
+            </div>
+            <div class="d-flex justify-content-between align-items-end mt-1">
+              <span class="text-secondary small">
+                {{ transaction.type === 'SEND' ? 'Sent on' : 'Received on' }}
+                {{ transaction.createdOn | date:'medium' }}
+              </span>
+              <span class="badge rounded-pill fw-medium"
+                [ngClass]="{'bg-info-subtle text-info': transaction.status === 'SUCCESS' || transaction.status === 'COMPLETED', 'bg-warning-subtle text-warning': transaction.status === 'PENDING'}">
+                {{ transaction.status }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="transactions().length === 0 && !errorMessage()" class="text-center py-5 text-muted">
+      <i class="bi bi-wallet2 fs-1 d-block mb-3 opacity-25"></i>
+      <p class="mb-0 fw-medium">No transactions found matching your filters.</p>
+    </div>
+  </div>
+</div>
