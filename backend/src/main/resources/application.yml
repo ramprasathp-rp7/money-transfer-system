@@ -1,0 +1,44 @@
+spring:
+  application:
+    name: money-transfer-system
+
+  datasource:
+    # Append &allowPublicKeyRetrieval=true to the end of the URL
+    url: jdbc:mysql://localhost:3306/money_transfer_db?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    username: root
+    password: Root123$
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  sql:
+    init:
+      mode: always # This forces data.sql to run on startup
+
+  jpa:
+    defer-datasource-initialization: true # Ensures Hibernate creates tables BEFORE data.sql runs
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  security:
+    user:
+      name: user
+      password: password
+
+server:
+  port: 8080
+  servlet:
+    context-path: /
+
+logging:
+  level:
+    com.banking.moneytransfer: DEBUG
+    org.springframework.security: DEBUG
+    org.hibernate.SQL: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+
+dummy:
+  enable: true
