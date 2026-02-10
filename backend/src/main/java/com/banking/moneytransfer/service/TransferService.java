@@ -15,7 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.banking.moneytransfer.service.TransactionLoggingService;
 
 import java.util.Optional;
 
@@ -33,7 +32,7 @@ public class TransferService {
     private TransactionLogRepository transactionLogRepository;
 
     @Autowired
-    private TransactionLoggingService loggingService; // Inject the new helper
+    private TransactionLogService transactionLogService;
 
     /**
      * Execute fund transfer between accounts
@@ -96,39 +95,12 @@ public class TransferService {
                 .orElseThrow(() -> new AccountNotFoundException(request.getToAccountId()));
 
         try {
-            // Rule 9: Debit before credit
+            // Debit before credit
             fromAccount.debit(request.getAmount());
             toAccount.credit(request.getAmount());
 
-            // Save accounts
-            accountRepository.save(fromAccount);
-            accountRepository.save(toAccount);
-
-            // Rule 10: Log transaction
-            TransactionLog transactionLog = TransactionLog.builder()
-                    .fromAccount(fromAccount)
-                    .toAccount(toAccount)
-                    .amount(request.getAmount())
-                    .status(TransactionStatus.SUCCESS)
-                    .idempotencyKey(request.getIdempotencyKey())
-                    .build();
-
-            // Save transactionLog
-            transactionLog = transactionLogRepository.save(transactionLog);
-
-            log.info("Transfer completed successfully. Transaction ID: {}", transactionLog.getId());
-
-            // Build response
-            return TransferResponse.builder()
-                    .transactionId(transactionLog.getId().toString())
-                    .status("SUCCESS")
-                    .message("Transfer completed successfully")
-                    .debitedFrom(request.getFromAccountId())
-                    .creditedTo(request.getToAccountId())
-                    .amount(request.getAmount())
-                    .build();
         } catch (AccountNotActiveException | InsufficientBalanceException e) {
-            // 6. Failure Path: Log Failure (in a new transaction)
+            // Log Failure (in a new transaction log)
             log.error("Transfer failed: {}", e.getMessage());
 
             TransactionLog failedLog = TransactionLog.builder()
@@ -139,10 +111,38 @@ public class TransferService {
                     .failureReason(e.getMessage())
                     .idempotencyKey(request.getIdempotencyKey())
                     .build();
-            loggingService.saveLog(failedLog);
+            transactionLogService.saveLog(failedLog);
 
-            // 7. RETHROW the exception so GlobalExceptionHandler sends the correct HTTP response
+            // RETHROW the exception so GlobalExceptionHandler sends the correct HTTP response
             throw e;
         }
+
+        // Save accounts
+        accountRepository.save(fromAccount);
+        accountRepository.save(toAccount);
+
+        // Log transaction
+        TransactionLog transactionLog = TransactionLog.builder()
+                .fromAccount(fromAccount)
+                .toAccount(toAccount)
+                .amount(request.getAmount())
+                .status(TransactionStatus.SUCCESS)
+                .idempotencyKey(request.getIdempotencyKey())
+                .build();
+
+        // Save transactionLog
+        transactionLog = transactionLogRepository.save(transactionLog);
+
+        log.info("Transfer completed successfully. Transaction ID: {}", transactionLog.getId());
+
+        // Build response
+        return TransferResponse.builder()
+                .transactionId(transactionLog.getId().toString())
+                .status("SUCCESS")
+                .message("Transfer completed successfully")
+                .debitedFrom(request.getFromAccountId())
+                .creditedTo(request.getToAccountId())
+                .amount(request.getAmount())
+                .build();
     }
 }
