@@ -1,134 +1,192 @@
-<div class="card shadow-sm border-0">
-  <div class="card-header bg-white border-bottom py-3">
-    <div class="d-flex justify-content-between align-items-center">
-      <h2 class="h5 mb-0 fw-bold text-dark">Recent Transactions</h2>
-      <div class="d-flex align-items-center gap-2">
-        <!-- Filter Button with Nested Menu -->
-        <div class="position-relative">
-          <button
-            class="btn btn-sm btn-light border rounded-pill px-3 fw-medium d-flex align-items-center gap-2 shadow-sm"
-            (click)="toggleFilterMenu()">
-            <i class="bi bi-filter"></i> Filter
-            <span *ngIf="selectedStatusFilters().length + selectedTypeFilters().length > 0"
-              class="badge bg-primary rounded-pill small ms-1">
-              {{ selectedStatusFilters().length + selectedTypeFilters().length }}
+<div class="page-container pt-0">
+
+  <div class="card border-0 shadow-sm rounded-4 animate-up">
+
+
+    <div class="card-header bg-white border-0 py-3 px-4">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h2 class="h5 fw-bold text-dark m-0">Recent Transactions</h2>
+        <div class="d-flex align-items-center gap-3">
+          <div class="search-box position-relative">
+            <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-secondary"
+              style="font-size: 0.8rem;"></i>
+            <input type="text" class="form-control form-control-sm border bg-white rounded-pill ps-5 pe-4 shadow-none"
+              placeholder="Search for sender..." (input)="onSearch($event)" [value]="searchTerm()">
+          </div>
+
+          <!-- Filter Button with Nested Menu -->
+          <div class="position-relative">
+            <button
+              class="btn btn-white bg-white border rounded-pill p-1 px-3 shadow-none d-flex align-items-center gap-2"
+              (click)="toggleFilterMenu()">
+              <i class="bi bi-filter"></i>
+              <span *ngIf="selectedStatusFilters().length > 0" class="badge rounded-pill small"
+                style="background-color: #e0f2fe; color: #0369a1;">
+                {{ selectedStatusFilters().length }}
+              </span>
+            </button>
+
+            <!-- Nested Filter Menu -->
+            <div *ngIf="isFilterMenuOpen()" class="filter-dropdown shadow-lg rounded-3 border bg-white mt-2 fadeIn">
+              <div class="d-flex" style="min-width: 300px; min-height: 200px;">
+                <!-- Left Sidebar: Categories -->
+                <div class="filter-sidebar border-end p-0">
+                  <button
+                    class="filter-cat-btn w-100 text-start py-3 px-3 d-flex justify-content-between align-items-center border-0"
+                    [class.active]="activeFilterCategory() === 'Status'" (click)="setFilterCategory('Status')">
+                    Status <i class="bi bi-chevron-right small opacity-50"></i>
+                  </button>
+                  <button
+                    class="filter-cat-btn w-100 text-start py-3 px-3 d-flex justify-content-between align-items-center border-0"
+                    [class.active]="activeFilterCategory() === 'Date'" (click)="setFilterCategory('Date')">
+                    Date <i class="bi bi-chevron-right small opacity-50"></i>
+                  </button>
+                  <button
+                    class="filter-cat-btn w-100 text-start py-3 px-3 d-flex justify-content-between align-items-center border-0"
+                    [class.active]="activeFilterCategory() === 'Type'" (click)="setFilterCategory('Type')">
+                    Type <i class="bi bi-chevron-right small opacity-50"></i>
+                  </button>
+                </div>
+
+                <!-- Right Pane: Options -->
+                <div class="filter-options flex-grow-1 p-3">
+                  <div class="d-flex justify-content-between align-items-center mb-3">
+                    <span class="text-uppercase small fw-bold text-muted">{{ activeFilterCategory() }}</span>
+                    <button class="btn btn-link btn-sm p-0 text-decoration-none small text-dark"
+                      (click)="clearFilters()">Clear</button>
+                  </div>
+
+                  <!-- Status Options -->
+                  <div *ngIf="activeFilterCategory() === 'Status'" class="d-flex flex-column gap-2 text-dark">
+                    <label class="filter-option d-flex align-items-center gap-2 p-2 rounded">
+                      <input type="checkbox" [checked]="selectedStatusFilters().includes('SUCCESS')"
+                        (change)="toggleStatusFilter('SUCCESS')">
+                      Success
+                    </label>
+                    <label class="filter-option d-flex align-items-center gap-2 p-2 rounded">
+                      <input type="checkbox" [checked]="selectedStatusFilters().includes('FAILURE')"
+                        (change)="toggleStatusFilter('FAILURE')">
+                      Failure
+                    </label>
+                  </div>
+
+                  <!-- Date Options -->
+                  <div *ngIf="activeFilterCategory() === 'Date'" class="d-flex flex-column gap-2 text-dark">
+                    <label class="filter-option d-flex align-items-center gap-2 p-2 rounded">
+                      <input type="radio" name="dateSort" [checked]="dateSortOrder() === 'desc'"
+                        (change)="setDateSort('desc')">
+                      Descending (Latest First)
+                    </label>
+                    <label class="filter-option d-flex align-items-center gap-2 p-2 rounded">
+                      <input type="radio" name="dateSort" [checked]="dateSortOrder() === 'asc'"
+                        (change)="setDateSort('asc')">
+                      Ascending (Oldest First)
+                    </label>
+                  </div>
+
+                  <!-- Type Options -->
+                  <div *ngIf="activeFilterCategory() === 'Type'" class="d-flex flex-column gap-2 text-dark">
+                    <label class="filter-option d-flex align-items-center gap-2 p-2 rounded">
+                      <input type="checkbox" [checked]="selectedTypeFilters().includes('SEND')"
+                        (change)="toggleTypeFilter('SEND')">
+                      Paid (Out)
+                    </label>
+                    <label class="filter-option d-flex align-items-center gap-2 p-2 rounded">
+                      <input type="checkbox" [checked]="selectedTypeFilters().includes('RECEIVE')"
+                        (change)="toggleTypeFilter('RECEIVE')">
+                      Received (In)
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <!-- Footer -->
+              <div class="border-top p-2 text-end">
+                <button class="btn btn-sm px-4 rounded-pill fw-bold"
+                  style="background-color: #e0f2fe; color: #0369a1; border: none;"
+                  (click)="toggleFilterMenu()">Done</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="bg-white text-secondary small text-uppercase fw-bold border-bottom">
+            <tr>
+              <th class="ps-4 border-0 py-2">Date</th>
+              <th class="border-0 py-2">Recipient/Sender</th>
+              <th class="border-0 py-2">Status</th>
+              <th class="border-0 py-2">Type</th>
+              <th class="border-0 py-2">Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let transaction of transactions()" class="border-0">
+              <td class="ps-4 py-2 text-secondary small border-0">
+                <span class="d-block text-dark fw-medium">{{ transaction.createdOn | date:'dd MMM yy' }}</span>
+                <span class="text-muted" style="font-size: 0.7rem;">{{ transaction.createdOn | date:'hh:mm a' }}</span>
+              </td>
+              <td class="py-2 border-0">
+                <span class="fw-bold text-dark">{{ transaction.holderName }}</span>
+              </td>
+              <td class="py-2 border-0">
+                <span class="fw-bold small"
+                  [ngClass]="transaction.status === 'SUCCESS' ? 'text-success' : 'text-danger'">
+                  {{ transaction.status === 'SUCCESS' ? 'Success' : 'Failed' }}
+                </span>
+              </td>
+              <td class="py-2 border-0">
+                <span class="text-dark small fw-medium">
+                  {{ transaction.type === 'SEND' ? 'Paid' : 'Received' }}
+                </span>
+              </td>
+              <td class="py-2 fw-bold border-0 text-dark">
+                {{ transaction.type === 'RECEIVE' ? '+' : '-' }}&#8377; {{ transaction.amount | number:'1.0-0' }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Empty State -->
+        <div *ngIf="transactions().length === 0" class="text-center py-5">
+          <i class="bi bi-inbox fs-1 text-light-emphasis"></i>
+          <p class="text-secondary mt-2">No transactions matching your search.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-footer bg-white border-0 py-3 px-4 d-flex justify-content-between align-items-center mt-auto">
+      <div class="text-secondary small">
+        Transactions <span class="fw-bold text-dark">{{ (currentPage() - 1) * pageSize() + 1 }}-{{
+          Math.min(currentPage() * pageSize(), filteredTransactions().length) }}</span>
+        of <span class="fw-bold text-dark">{{ filteredTransactions().length }}</span>
+      </div>
+      <nav>
+        <ul class="pagination pagination-sm mb-0 align-items-center">
+          <!-- Prev Page -->
+          <li class="page-item" [class.disabled]="currentPage() === 1">
+            <a class="page-link shadow-none rounded-3 text-dark border" href="javascript:void(0)" (click)="prevPage()">
+              <i class="bi bi-chevron-left"></i>
+            </a>
+          </li>
+
+          <!-- Current Page Display (No Box) -->
+          <li class="mx-3">
+            <span class="fw-bold text-dark" style="font-size: 1rem;">
+              {{ currentPage() }}
             </span>
-          </button>
+          </li>
 
-          <!-- Nested Filter Menu -->
-          <div *ngIf="isFilterMenuOpen()" class="filter-dropdown shadow-lg rounded-3 border bg-white mt-2 fadeIn">
-            <div class="d-flex" style="min-width: 400px; min-height: 250px;">
-              <!-- Left Sidebar: Categories -->
-              <div class="filter-sidebar bg-light border-end p-0" style="width: 150px;">
-                <button
-                  class="filter-cat-btn w-100 text-start py-3 px-3 d-flex justify-content-between align-items-center border-0"
-                  [class.active]="activeFilterCategory() === 'Status'" (click)="setFilterCategory('Status')">
-                  Status <i class="bi bi-chevron-right small opacity-50"></i>
-                </button>
-                <button
-                  class="filter-cat-btn w-100 text-start py-3 px-3 d-flex justify-content-between align-items-center border-0"
-                  [class.active]="activeFilterCategory() === 'Type'" (click)="setFilterCategory('Type')">
-                  Type <i class="bi bi-chevron-right small opacity-50"></i>
-                </button>
-              </div>
-
-              <!-- Right Pane: Options -->
-              <div class="filter-options flex-grow-1 p-3">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                  <span class="text-uppercase small fw-bold text-muted">{{ activeFilterCategory() }}</span>
-                  <button class="btn btn-link btn-sm p-0 text-decoration-none small"
-                    (click)="clearFilters()">Clear</button>
-                </div>
-
-                <!-- Status Options -->
-                <div *ngIf="activeFilterCategory() === 'Status'" class="d-flex flex-column gap-2">
-                  <label class="filter-option d-flex align-items-center gap-2 p-2 rounded">
-                    <input type="checkbox" [checked]="selectedStatusFilters().includes('SUCCESS')"
-                      (change)="toggleStatusFilter('SUCCESS')">
-                    Success
-                  </label>
-                  <label class="filter-option d-flex align-items-center gap-2 p-2 rounded">
-                    <input type="checkbox" [checked]="selectedStatusFilters().includes('FAILURE')"
-                      (change)="toggleStatusFilter('FAILURE')">
-                    Failure
-                  </label>
-                  <label class="filter-option d-flex align-items-center gap-2 p-2 rounded">
-                    <input type="checkbox" [checked]="selectedStatusFilters().includes('PENDING')"
-                      (change)="toggleStatusFilter('PENDING')">
-                    Pending
-                  </label>
-                </div>
-
-                <!-- Type Options -->
-                <div *ngIf="activeFilterCategory() === 'Type'" class="d-flex flex-column gap-2">
-                  <label class="filter-option d-flex align-items-center gap-2 p-2 rounded">
-                    <input type="checkbox" [checked]="selectedTypeFilters().includes('SEND')"
-                      (change)="toggleTypeFilter('SEND')">
-                    Paid
-                  </label>
-                  <label class="filter-option d-flex align-items-center gap-2 p-2 rounded">
-                    <input type="checkbox" [checked]="selectedTypeFilters().includes('RECEIVE')"
-                      (change)="toggleTypeFilter('RECEIVE')">
-                    Received
-                  </label>
-                </div>
-              </div>
-            </div>
-            <!-- Footer -->
-            <div class="border-top p-2 text-end">
-              <button class="btn btn-primary btn-sm px-4 rounded-pill" (click)="toggleFilterMenu()">Done</button>
-            </div>
-          </div>
-        </div>
-
-      </div>
+          <!-- Next Page -->
+          <li class="page-item" [class.disabled]="currentPage() === totalPages()">
+            <a class="page-link shadow-none rounded-3 text-dark border" href="javascript:void(0)" (click)="nextPage()">
+              <i class="bi bi-chevron-right"></i>
+            </a>
+          </li>
+        </ul>
+      </nav>
     </div>
   </div>
-
-  <div class="card-body p-0">
-    <div *ngIf="errorMessage()" class="alert alert-danger m-3 shadow-sm border-start border-4">
-      <i class="bi bi-exclamation-circle-fill me-2"></i>{{ errorMessage() }}
-    </div>
-
-    <div class="list-group list-group-flush" *ngIf="transactions().length > 0">
-      <div *ngFor="let transaction of transactions()"
-        class="list-group-item list-group-item-action py-3 px-4 border-0 border-bottom">
-        <div class="d-flex align-items-center">
-          <!-- Circular Avatar with First Letter -->
-          <div
-            class="avatar-circle me-3 flex-shrink-0 d-flex align-items-center justify-content-center text-white fw-bold shadow-sm"
-            [ngClass]="transaction.type === 'RECEIVE' ? 'bg-success bg-gradient' : 'bg-primary bg-gradient'">
-            {{ transaction.holderName.charAt(0).toUpperCase() }}
-          </div>
-
-          <!-- Recipient/Sender Name and Status Message -->
-          <div class="flex-grow-1">
-            <div class="d-flex justify-content-between align-items-center">
-              <h6 class="mb-0 fw-bold text-dark fs-6">{{ transaction.holderName }}</h6>
-              <!-- Amount with +/- and Color -->
-              <div class="fw-bold fs-5" [ngClass]="transaction.type === 'RECEIVE' ? 'text-success' : 'text-danger'">
-                {{ transaction.type === 'RECEIVE' ? '+' : '-' }}{{ transaction.amount | currency }}
-              </div>
-            </div>
-            <div class="d-flex justify-content-between align-items-end mt-1">
-              <span class="text-secondary small">
-                {{ transaction.type === 'SEND' ? 'Sent on' : 'Received on' }}
-                {{ transaction.createdOn | date:'medium' }}
-              </span>
-              <span class="badge rounded-pill fw-medium"
-                [ngClass]="{'bg-info-subtle text-info': transaction.status === 'SUCCESS' || transaction.status === 'COMPLETED', 'bg-warning-subtle text-warning': transaction.status === 'PENDING'}">
-                {{ transaction.status }}
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Empty State -->
-    <div *ngIf="transactions().length === 0 && !errorMessage()" class="text-center py-5 text-muted">
-      <i class="bi bi-wallet2 fs-1 d-block mb-3 opacity-25"></i>
-      <p class="mb-0 fw-medium">No transactions found matching your filters.</p>
-    </div>
-  </div>
-</div>

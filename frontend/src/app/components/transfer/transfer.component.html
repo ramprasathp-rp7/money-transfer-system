@@ -1,102 +1,166 @@
-<div class="row justify-content-center">
-    <div class="col-md-10 col-lg-8">
-        <div class="card shadow-sm border-0">
-            <div class="card-header bg-dark text-white py-3">
-                <h2 class="h5 mb-0 text-center">Initiate Secure Transfer</h2>
+<div class="card shadow-sm border-0 animate-up overflow-hidden">
+    <div class="transfer-grid">
+        <!-- Left Side: Form -->
+        <div class="form-side">
+            <!-- SUCCESS VIEW -->
+            <div *ngIf="lastTransaction()"
+                class="success-screen fadeIn d-flex flex-column align-items-center text-center py-4">
+                <div class="mb-3">
+                    <div class="success-icon-wrapper mb-2">
+                        <i class="bi bi-check-circle-fill text-success" style="font-size: 3.5rem;"></i>
+                    </div>
+                    <h2 class="h4 fw-bold text-dark m-0">Transfer Successful!</h2>
+                </div>
+
+                <div class="receipt-details w-100 rounded-4 p-4 mb-4 text-start">
+                    <div class="d-flex justify-content-between mb-3">
+                        <span class="text-muted">Transaction ID</span>
+                        <span class="font-monospace text-dark fw-bold">{{ lastTransaction()?.transactionId
+                            }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span class="text-muted">Recipient</span>
+                        <span class="fw-bold text-dark">{{ lastTransaction()?.creditedTo }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between border-top pt-3">
+                        <span class="text-muted fw-bold">Amount Sent</span>
+                        <span class="text-success fw-bold h4 mb-0">&#8377; {{ lastTransaction()?.amount |
+                            number:'1.0-0' }}</span>
+                    </div>
+                </div>
+
+                <button (click)="resetForm()"
+                    class="btn btn-outline-primary rounded-pill px-5 py-3 fw-bold w-100 transition-all">
+                    Make Another Transfer
+                </button>
             </div>
-            <div class="card-body p-4 p-md-5">
-                <!-- Error Alert -->
-                <div *ngIf="errorMessage()" class="alert alert-danger shadow-sm border-start border-4 mb-4"
-                    role="alert">
-                    <i class="bi bi-exclamation-triangle-fill me-2"></i>{{ errorMessage() }}
+
+            <!-- FAILURE VIEW -->
+            <div *ngIf="failedTransaction()"
+                class="success-screen fadeIn d-flex flex-column align-items-center text-center py-4">
+                <div class="mb-3">
+                    <div class="success-icon-wrapper mb-2">
+                        <i class="bi bi-x-circle-fill text-danger" style="font-size: 3.5rem;"></i>
+                    </div>
+                    <h2 class="h4 fw-bold text-dark m-0">Transfer Failed</h2>
+                    <p class="text-secondary small mt-2">We couldn't complete your request.</p>
                 </div>
 
-                <!-- Success Receipt Card -->
-                <div *ngIf="lastTransaction()" class="card bg-success-subtle border-success-subtle shadow-sm mb-5">
-                    <div class="card-body">
-                        <h3 class="h6 card-title text-success mb-4 d-flex align-items-center">
-                            <i class="bi bi-check-circle-fill me-2 fs-5"></i> Transfer Successful
-                        </h3>
-                        <div class="row g-4">
-                            <div class="col-sm-6">
-                                <label class="text-muted small text-uppercase fw-bold d-block mb-1">Transaction
-                                    ID</label>
-                                <span class="font-monospace text-dark">{{ lastTransaction()?.transactionId }}</span>
-                            </div>
-                            <div class="col-sm-6 text-sm-end">
-                                <label class="text-muted small text-uppercase fw-bold d-block mb-1">Amount</label>
-                                <span class="text-success fw-bold fs-5">{{ lastTransaction()?.amount | currency
-                                    }}</span>
-                            </div>
-                            <div class="col-sm-6">
-                                <label class="text-muted small text-uppercase fw-bold d-block mb-1">Recipient ID</label>
-                                <span class="text-dark">{{ lastTransaction()?.creditedTo }}</span>
-                            </div>
-                            <div class="col-sm-6 text-sm-end">
-                                <label class="text-muted small text-uppercase fw-bold d-block mb-1">Status</label>
-                                <span class="badge bg-success">{{ lastTransaction()?.status }}</span>
-                            </div>
-                            <div class="col-12 mt-2 pt-2 border-top">
-                                <p class="text-muted small mb-0">{{ lastTransaction()?.message }}</p>
-                            </div>
-                        </div>
+                <div class="receipt-details w-100 rounded-4 p-4 mb-4 text-start border-danger"
+                    style="background-color: #fff5f5 !important; border: 1px dashed #dc3545 !important;">
+                    <div class="mb-3">
+                        <span class="text-muted small d-block">Reason</span>
+                        <span class="text-danger fw-bold">{{ failedTransaction()?.message }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted small">Target Account</span>
+                        <span class="text-dark fw-bold small">{{ failedTransaction()?.toAccountId }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between border-top pt-2">
+                        <span class="text-muted small">Amount</span>
+                        <span class="text-dark fw-bold">&#8377; {{ failedTransaction()?.amount | number:'1.0-0'
+                            }}</span>
                     </div>
                 </div>
 
-                <!-- Sender Info Section -->
-                <div *ngIf="senderAccount()" class="bg-light p-4 rounded-3 border mb-5 shadow-sm">
-                    <h3 class="h6 text-secondary text-uppercase fw-bold mb-4">From Account</h3>
-                    <div class="row g-4 text-center text-sm-start">
-                        <div class="col-sm-4 border-sm-end">
-                            <label class="text-muted small d-block mb-1">Holder</label>
-                            <span class="fw-bold fs-6 text-dark">{{ senderAccount()?.holderName }}</span>
-                        </div>
-                        <div class="col-sm-4 border-sm-end">
-                            <label class="text-muted small d-block mb-1">Account</label>
-                            <span class="font-monospace text-dark">{{ maskedAccountId() }}</span>
-                        </div>
-                        <div class="col-sm-4">
-                            <label class="text-muted small d-block mb-1">Balanced</label>
-                            <span class="fw-bold text-primary fs-5">{{ senderAccount()?.balance | currency }}</span>
-                        </div>
-                    </div>
+                <button (click)="resetForm()" class="btn btn-dark rounded-pill px-5 py-3 fw-bold w-100 transition-all">
+                    Try Again
+                </button>
+            </div>
+
+            <!-- FORM VIEW -->
+            <div *ngIf="!lastTransaction() && !failedTransaction()" class="form-screen fadeIn">
+                <div class="mb-4">
+                    <h2 class="form-title text-dark">Send Money</h2>
+                    <p class="form-subtitle">Secure, instant bank-to-bank transfer.</p>
                 </div>
 
-                <!-- Transfer Form -->
-                <form (ngSubmit)="onSubmit()" #transferForm="ngForm" class="mt-2">
-                    <div class="mb-4">
-                        <label for="toAccountId" class="form-label text-secondary fw-medium">Recipient Account
-                            ID</label>
-                        <div class="input-group has-validation">
-                            <span class="input-group-text bg-light text-muted"><i class="bi bi-person-fill"></i></span>
-                            <input type="text" id="toAccountId" name="toAccountId"
-                                [(ngModel)]="transferRequest.toAccountId"
-                                class="form-control form-control-lg border-start-0" required
-                                placeholder="e.g. 1000-1000-1002">
-                        </div>
-                    </div>
+                <div *ngIf="errorMessage()" class="alert alert-danger p-3 border-0 rounded-4 mb-4 fadeIn">
+                    <i class="bi bi-exclamation-circle-fill me-2"></i>{{ errorMessage() }}
+                </div>
 
-                    <div class="mb-5">
-                        <label for="amount" class="form-label text-secondary fw-medium">Transfer Amount</label>
+                <form (ngSubmit)="onSubmit()" #transferForm="ngForm">
+                    <div class="mb-3">
+                        <label for="toAccountId"
+                            class="form-label text-dark fw-bold small text-uppercase mb-1">Recipient Account ID</label>
                         <div class="input-group">
-                            <span class="input-group-text bg-light text-dark fw-bold">$</span>
-                            <input type="number" id="amount" name="amount" [(ngModel)]="transferRequest.amount"
-                                class="form-control form-control-lg border-start-0 px-3 fs-4" required min="0.01"
-                                step="0.01" placeholder="0.00">
-                        </div>
-                        <div class="form-text mt-2 px-1">Please double check the recipient ID and amount before sending.
+                            <span class="input-group-text"><i class="bi bi-person-badge"></i></span>
+                            <input type="text" id="toAccountId" name="toAccountId"
+                                [(ngModel)]="transferRequest.toAccountId" class="form-control" required
+                                placeholder="Enter Account ID">
                         </div>
                     </div>
 
-                    <div class="d-grid gap-2">
-                        <button type="submit" [disabled]="!transferForm.form.valid || isLoading()"
-                            class="btn btn-primary btn-lg py-3 shadow-sm fw-bold">
-                            <span *ngIf="isLoading()" class="spinner-border spinner-border-sm me-2" role="status"
-                                aria-hidden="true"></span>
-                            {{ isLoading() ? 'Processing Secure Transfer...' : 'Send Money Now' }}
-                        </button>
+                    <div class="mb-4">
+                        <label for="amount" class="form-label text-dark fw-bold small text-uppercase mb-1">Amount to
+                            Transfer</label>
+                        <div class="input-group">
+                            <span class="input-group-text fw-bold">&#8377;</span>
+                            <input type="number" id="amount" name="amount" [(ngModel)]="transferRequest.amount"
+                                class="form-control fw-bold text-primary" required min="1" placeholder="0.00">
+                        </div>
+                        <div class="form-text mt-1 text-muted small px-1">
+                            <i class="bi bi-info-circle me-1"></i> Ensure balance covers the amount.
+                        </div>
                     </div>
+
+                    <button type="submit" [disabled]="!transferForm.form.valid || isLoading()"
+                        class="btn btn-primary w-100 py-3 rounded-pill shadow-sm fw-bold transition-all"
+                        style="background-color: #0369a1; border: none;">
+                        <span *ngIf="isLoading()" class="spinner-border spinner-border-sm me-2"></span>
+                        {{ isLoading() ? 'Transferring...' : 'Send Money Now' }}
+                    </button>
                 </form>
+            </div>
+        </div>
+
+        <!-- Right Side: Instructions -->
+        <div class="info-side">
+            <h3 class="h5 fw-bold mb-4 text-dark">How it works</h3>
+
+            <div class="instruction-item">
+                <div class="step-number">1</div>
+                <div>
+                    <p class="fw-bold mb-1 small uppercase">Enter Receiver ID</p>
+                    <p class="text-muted small mb-0">Provide the unique account identifier of the person you
+                        want to pay.</p>
+                </div>
+            </div>
+
+            <div class="instruction-item">
+                <div class="step-number">2</div>
+                <div>
+                    <p class="fw-bold mb-1 small uppercase">Specify Amount</p>
+                    <p class="text-muted small mb-0">Input the exact amount. Make sure it's within your
+                        available balance.</p>
+                </div>
+            </div>
+
+            <div class="instruction-item">
+                <div class="step-number">3</div>
+                <div>
+                    <p class="fw-bold mb-1 small uppercase">Verify & Send</p>
+                    <p class="text-muted small mb-0">Double check all details before clicking the confirm
+                        button.</p>
+                </div>
+            </div>
+
+            <!-- Balance Checker -->
+            <div class="balance-check-card shadow-sm">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="text-secondary small fw-bold">Your Balance</span>
+                    <button (click)="toggleBalance()" class="btn btn-link btn-sm p-0 text-decoration-none fw-bold"
+                        style="color: #0369a1;">
+                        {{ showBalance() ? 'Hide' : 'Check' }}
+                    </button>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-wallet2 text-primary"></i>
+                    <div class="h4 mb-0 fw-bold" [class.text-blur]="!showBalance()">
+                        {{ showBalance() ? ('&#8377; ' + (senderAccount()?.balance | number:'1.0-0')) :
+                        '&#8226;&#8226;&#8226;&#8226;&#8226;' }}
+                    </div>
+                </div>
             </div>
         </div>
     </div>

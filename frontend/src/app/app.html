@@ -1,22 +1,32 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
-  <div class="container">
-    <a class="navbar-brand" href="#">Money Transfer System</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav">
-        <li class="nav-item">
-          <a routerLink="/transactions" routerLinkActive="active" class="nav-link">Transactions</a>
-        </li>
-        <li class="nav-item">
-          <a routerLink="/transfer" routerLinkActive="active" class="nav-link">Transfer</a>
-        </li>
-      </ul>
+<header *ngIf="showNavbar" class="app-header shadow-sm bg-white border-bottom py-2 mb-4 sticky-top animate-down">
+  <div class="container-fluid px-4">
+    <div class="d-flex justify-content-between align-items-center h-100">
+      <!-- Logo & Nav Section -->
+      <div class="d-flex align-items-center gap-4">
+        <div class="header-logo d-flex align-items-center gap-2">
+          <div class="logo-box bg-dark text-white rounded-circle d-flex align-items-center justify-content-center"
+            style="width: 36px; height: 36px;">
+            <i class="bi bi-bank2"></i>
+          </div>
+          <span class="fw-bold h5 mb-0">SwiftPay</span>
+        </div>
+
+        <nav class="d-flex align-items-center gap-2">
+          <a routerLink="/transactions" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}"
+            class="nav-link px-3 py-2 rounded-pill fw-bold text-decoration-none transition-all">Transactions</a>
+          <a routerLink="/transfer" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}"
+            class="nav-link px-3 py-2 rounded-pill fw-bold text-decoration-none transition-all">Transfer</a>
+        </nav>
+      </div>
+
+      <!-- Right Actions Section -->
+      <div class="d-flex align-items-center gap-3">
+        <span class="text-secondary fw-medium me-2">Welcome Back {{ holderName() }}</span>
+      </div>
     </div>
   </div>
-</nav>
+</header>
 
-<main class="container">
+<main [class.container]="showNavbar" [class.container-fluid]="!showNavbar" [class.p-0]="!showNavbar">
   <router-outlet></router-outlet>
 </main>

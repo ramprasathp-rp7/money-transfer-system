@@ -15,10 +15,10 @@ export class AuthService {
     constructor(private http: HttpClient, private router: Router) { }
 
     login(username: string, password: string): Observable<HttpResponse<any>> {
-      
+
         this.username = username;
         this.password = password;
-       
+
 
         return this.http.get(this.apiUrl, {
             observe: 'response',
@@ -33,9 +33,14 @@ export class AuthService {
             }),
             catchError(error => {
                 console.error('Login Error:', error);
-                alert('Login failed. Please check your credentials.');
                 return throwError(() => error);
             })
         );
+    }
+
+    logout(): void {
+        this.username = null;
+        this.password = null;
+        this.router.navigate(['/login']);
     }
 }

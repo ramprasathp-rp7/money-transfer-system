@@ -27,6 +27,8 @@ export class TransferComponent implements OnInit {
     errorMessage = signal<string>('');
     successMessage = signal<string>('');
     lastTransaction = signal<TransferResponse | null>(null);
+    failedTransaction = signal<any | null>(null);
+    showBalance = signal<boolean>(false);
     isLoading = signal<boolean>(false);
 
     constructor(
@@ -34,10 +36,14 @@ export class TransferComponent implements OnInit {
         private authService: AuthService
     ) { }
 
+    toggleBalance(): void {
+        this.showBalance.update(v => !v);
+    }
+
     ngOnInit(): void {
         // Set from account ID from authenticated user
         this.transferRequest.fromAccountId = this.authService.username || '';
-        
+
         // Generate Idempotency Key
         this.transferRequest.idempotencyKey = crypto.randomUUID();
         console.log('Idempotency Key generated:', this.transferRequest.idempotencyKey);
@@ -75,6 +81,7 @@ export class TransferComponent implements OnInit {
         this.errorMessage.set('');
         this.successMessage.set('');
         this.lastTransaction.set(null);
+        this.failedTransaction.set(null);
 
         this.transactionService.transfer(this.transferRequest).subscribe({
             next: (response) => {
@@ -90,9 +97,27 @@ export class TransferComponent implements OnInit {
             },
             error: (error) => {
                 console.error('Transfer failed:', error);
-                this.errorMessage.set(error.error?.message || 'Transfer failed. Please try again.');
+                this.failedTransaction.set({
+                    message: error.error?.message || 'Transfer could not be processed.',
+                    timestamp: new Date(),
+                    toAccountId: this.transferRequest.toAccountId,
+                    amount: this.transferRequest.amount
+                });
                 this.isLoading.set(false);
+
+                // IMPORTANT: Generate new idempotency key even on failure 
+                // so the next attempt is a fresh transaction
+                this.transferRequest.idempotencyKey = crypto.randomUUID();
             }
         });
+    }
+
+    resetForm(): void {
+        this.lastTransaction.set(null);
+        this.failedTransaction.set(null);
+        this.successMessage.set('');
+        this.errorMessage.set('');
+        this.transferRequest.toAccountId = '';
+        this.transferRequest.amount = 0;
     }
 }

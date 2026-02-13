@@ -13,6 +13,7 @@ import { CommonModule } from '@angular/common';
 export class LoginComponent {
     loginForm: FormGroup;
     isLoading = false;
+    errorMessage = '';
 
     constructor(private fb: FormBuilder, private authService: AuthService) {
         this.loginForm = this.fb.group({
@@ -24,6 +25,7 @@ export class LoginComponent {
     onSubmit() {
         if (this.loginForm.valid) {
             this.isLoading = true;
+            this.errorMessage = '';
             const { username, password } = this.loginForm.value;
             this.authService.login(username, password).subscribe({
                 next: (response) => {
@@ -31,10 +33,12 @@ export class LoginComponent {
                 },
                 error: (err) => {
                     this.isLoading = false;
+                    this.errorMessage = 'Invalid Credentials';
                 }
             });
         } else {
             this.markFormGroupTouched(this.loginForm);
+            this.errorMessage = 'Invalid Credentials';
         }
     }
 
