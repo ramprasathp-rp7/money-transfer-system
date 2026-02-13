@@ -1,7 +1,8 @@
-import { Component, OnInit, signal, computed } from '@angular/core';
+import { Component, OnInit, signal, computed, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TransactionService } from '../../services/transaction.service';
 import { Transaction } from '../../models/transaction.model';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
     selector: 'app-transaction-list',
@@ -13,7 +14,7 @@ import { Transaction } from '../../models/transaction.model';
 export class TransactionListComponent implements OnInit {
     private allTransactions = signal<Transaction[]>([]);
     errorMessage = signal<string>('');
-    accountId: string = '1000-1000-1001';
+    accountId: string = '';
 
     // Filter State
     isFilterMenuOpen = signal<boolean>(false);
@@ -41,9 +42,13 @@ export class TransactionListComponent implements OnInit {
         return data;
     });
 
-    constructor(private transactionService: TransactionService) { }
+    constructor(
+        private transactionService: TransactionService,
+        private authService: AuthService
+    ) { }
 
     ngOnInit(): void {
+        this.accountId = this.authService.username || '';
         this.fetchTransactions();
     }
 

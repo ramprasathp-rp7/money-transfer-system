@@ -2,6 +2,7 @@ import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TransactionService } from '../../services/transaction.service';
+import { AuthService } from '../../services/auth.service';
 import { TransferRequest } from '../../models/transfer-request.model';
 import { Account } from '../../models/account.model';
 import { TransferResponse } from '../../models/transfer-response.model';
@@ -15,7 +16,7 @@ import { TransferResponse } from '../../models/transfer-response.model';
 })
 export class TransferComponent implements OnInit {
     transferRequest: TransferRequest = {
-        fromAccountId: '1000-1000-1001', // Hardcoded sender for now
+        fromAccountId: '',
         toAccountId: '',
         amount: 0,
         idempotencyKey: ''
@@ -28,9 +29,15 @@ export class TransferComponent implements OnInit {
     lastTransaction = signal<TransferResponse | null>(null);
     isLoading = signal<boolean>(false);
 
-    constructor(private transactionService: TransactionService) { }
+    constructor(
+        private transactionService: TransactionService,
+        private authService: AuthService
+    ) { }
 
     ngOnInit(): void {
+        // Set from account ID from authenticated user
+        this.transferRequest.fromAccountId = this.authService.username || '';
+        
         // Generate Idempotency Key
         this.transferRequest.idempotencyKey = crypto.randomUUID();
         console.log('Idempotency Key generated:', this.transferRequest.idempotencyKey);
