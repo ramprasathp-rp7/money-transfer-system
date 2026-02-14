@@ -112,7 +112,7 @@ export class TransactionListComponent implements OnInit {
     }
 
     get username(): string {
-        const name = this.authService.username;
+        const name = this.authService.accountId;
         return name ? name.charAt(0).toUpperCase() + name.slice(1) : 'User';
     }
 
@@ -129,7 +129,7 @@ export class TransactionListComponent implements OnInit {
     ) { }
 
     ngOnInit(): void {
-        this.accountId = this.authService.username || '';
+        this.accountId = this.authService.accountId || '';
         this.fetchTransactions();
         this.fetchAccountDetails();
     }

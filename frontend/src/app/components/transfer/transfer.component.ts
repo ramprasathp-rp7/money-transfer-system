@@ -42,7 +42,7 @@ export class TransferComponent implements OnInit {
 
     ngOnInit(): void {
         // Set from account ID from authenticated user
-        this.transferRequest.fromAccountId = this.authService.username || '';
+        this.transferRequest.fromAccountId = this.authService.accountId || '';
 
         // Generate Idempotency Key
         this.transferRequest.idempotencyKey = crypto.randomUUID();

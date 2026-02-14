@@ -9,15 +9,15 @@ import { Router } from '@angular/router';
 export class AuthService {
     private readonly API_ENDPOINT = 'http://localhost:8080/api/v1/auth/login';
 
-    public username: string | null = null;
-    public password: string | null = null;
+    public accountId: string | null = null;
+    public authToken: string | null = null;
     public loggedIn: boolean = false;
 
     constructor(private http: HttpClient) { }
 
     login(username: string, password: string): Observable<HttpResponse<any>> {
-        this.username = username;
-        this.password = password;
+        this.accountId = username;
+        this.authToken = 'Basic ' + btoa(username + ':' + password);
 
         return this.http.get(this.API_ENDPOINT, {
             observe: 'response',
@@ -26,23 +26,19 @@ export class AuthService {
                 if (response.ok) {
                     this.loggedIn = true;
                 } else {
-                    this.loggedIn = false;
-                    this.username = null;
-                    this.password = null;
+                    this.logout();
                 }
             }),
             catchError((err) => {
-                this.loggedIn = false;
-                this.username = null;
-                this.password = null;
-                return throwError(() => err)
+                this.logout();
+                return throwError(() => err);
             })
         );
     }
 
     logout(): void {
         this.loggedIn = false;
-        this.username = null;
-        this.password = null;
+        this.accountId = null;
+        this.authToken = null;
     }
 }

@@ -27,9 +27,9 @@ export class LoginComponent {
     }
 
     onSubmit() {
-        this.submitted.set(true)
-        this.errorMessage.set("")
         if (this.loginForm.valid) {
+            this.submitted.set(true)
+            this.errorMessage.set("")
             const { username, password } = this.loginForm.value;
             this.authService.login(username, password).subscribe({
                 next: (response) => {

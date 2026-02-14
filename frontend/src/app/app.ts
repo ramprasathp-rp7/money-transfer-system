@@ -28,9 +28,8 @@ export class App {
       const url = event.urlAfterRedirects || event.url;
       this.showNavbar = !url.includes('/login');
 
-      // Fetch holder name if we are logged in and don't have it yet
-      if (this.showNavbar && this.authService.username) {
-        this.transactionService.getAccountDetails(this.authService.username).subscribe({
+      if (this.showNavbar && this.authService.loggedIn) {
+        this.transactionService.getAccountDetails(this.authService.accountId!).subscribe({
           next: (account) => this.holderName.set(account.holderName),
           error: () => this.holderName.set(this.username) // Fallback to username
         });
@@ -39,7 +38,7 @@ export class App {
   }
 
   get username(): string {
-    const name = this.authService.username;
+    const name = this.authService.accountId;
     return name ? name.charAt(0).toUpperCase() + name.slice(1) : 'User';
   }
 
