@@ -1,9 +1,9 @@
 import { Component, OnInit, signal, computed, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TransactionService } from '../../services/transaction.service';
 import { Transaction } from '../../models/transaction.model';
 import { Account } from '../../models/account.model';
 import { AuthService } from '../../services/auth.service';
+import { AccountService } from 'app/services/account.service';
 
 @Component({
     selector: 'app-transaction-list',
@@ -124,8 +124,8 @@ export class TransactionListComponent implements OnInit {
     }
 
     constructor(
-        private transactionService: TransactionService,
-        private authService: AuthService
+        private authService: AuthService,
+        private accountService: AccountService
     ) { }
 
     ngOnInit(): void {
@@ -136,7 +136,7 @@ export class TransactionListComponent implements OnInit {
 
     fetchAccountDetails(): void {
         if (!this.accountId) return;
-        this.transactionService.getAccountDetails(this.accountId).subscribe({
+        this.accountService.fetchAccount(this.accountId).subscribe({
             next: (account) => {
                 this.senderAccount.set(account);
             },
@@ -147,7 +147,7 @@ export class TransactionListComponent implements OnInit {
     }
 
     fetchTransactions(): void {
-        this.transactionService.getTransactions(this.accountId).subscribe({
+        this.accountService.fetchTransactions(this.accountId).subscribe({
             next: (data) => {
                 this.allTransactions.set(data);
             },

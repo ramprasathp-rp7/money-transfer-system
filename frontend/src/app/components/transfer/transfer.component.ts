@@ -1,11 +1,14 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { TransactionService } from '../../services/transaction.service';
-import { AuthService } from '../../services/auth.service';
-import { TransferRequest } from '../../models/transfer-request.model';
+
 import { Account } from '../../models/account.model';
+import { TransferRequest } from '../../models/transfer-request.model';
 import { TransferResponse } from '../../models/transfer-response.model';
+
+import { AuthService } from '../../services/auth.service';
+import { AccountService } from 'app/services/account.service';
+import { TransferService } from '../../services/transfer.service';
 
 @Component({
     selector: 'app-transfer',
@@ -32,8 +35,9 @@ export class TransferComponent implements OnInit {
     isLoading = signal<boolean>(false);
 
     constructor(
-        private transactionService: TransactionService,
-        private authService: AuthService
+        private authService: AuthService,
+        private accountService: AccountService,
+        private transferService: TransferService
     ) { }
 
     toggleBalance(): void {
@@ -53,7 +57,7 @@ export class TransferComponent implements OnInit {
     }
 
     fetchSenderDetails(): void {
-        this.transactionService.getAccountDetails(this.transferRequest.fromAccountId).subscribe({
+        this.accountService.fetchAccount(this.transferRequest.fromAccountId).subscribe({
             next: (account) => {
                 this.senderAccount.set(account);
                 this.maskedAccountId.set(this.maskAccountId(account.id));
@@ -83,7 +87,7 @@ export class TransferComponent implements OnInit {
         this.lastTransaction.set(null);
         this.failedTransaction.set(null);
 
-        this.transactionService.transfer(this.transferRequest).subscribe({
+        this.transferService.transfer(this.transferRequest).subscribe({
             next: (response) => {
                 this.successMessage.set('Transfer successful!');
                 this.lastTransaction.set(response);

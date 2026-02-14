@@ -3,8 +3,7 @@ import { RouterOutlet, RouterLink, Router, NavigationEnd, RouterLinkActive } fro
 import { CommonModule } from '@angular/common';
 import { filter } from 'rxjs/operators';
 import { AuthService } from './services/auth.service';
-import { TransactionService } from './services/transaction.service';
-import { Account } from './models/account.model';
+import { AccountService } from './services/account.service';
 
 @Component({
   selector: 'app-root',
@@ -20,7 +19,7 @@ export class App {
   constructor(
     private router: Router,
     private authService: AuthService,
-    private transactionService: TransactionService
+    private accountService: AccountService
   ) {
     this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
@@ -29,7 +28,7 @@ export class App {
         this.showNavbar = !url.includes('/login');
 
         if (this.authService.loggedIn) {
-          this.transactionService.getAccountDetails(this.authService.accountId!).subscribe({
+          this.accountService.fetchAccount(this.authService.accountId!).subscribe({
             next: (account) => this.holderName.set(account.holderName),
             error: () => this.holderName.set(this.authService.accountId || "User")
           });
