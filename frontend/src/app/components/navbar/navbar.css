@@ -1,0 +1,45 @@
+.app-header {
+    height: 60px;
+}
+
+.nav-link {
+    color: #64748b;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+}
+
+.nav-link:hover {
+    color: #0ea5e9;
+    background-color: #f0f9ff;
+}
+
+.app-header {
+    background: #ffffff !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+    margin-bottom: 0.5rem !important;
+}
+
+.nav-link.active {
+    background-color: #e0f2fe;
+    color: #0369a1 !important;
+}
+
+.animate-down {
+    animation: slideInDown 0.5s ease-out;
+}
+
+@keyframes slideInDown {
+    from {
+        transform: translateY(-100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.transition-all {
+    transition: all 0.3s ease;
+}
