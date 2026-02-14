@@ -22,27 +22,23 @@ export class App {
     private authService: AuthService,
     private transactionService: TransactionService
   ) {
-    this.router.events.pipe(
-      filter(event => event instanceof NavigationEnd)
-    ).subscribe((event: any) => {
-      const url = event.urlAfterRedirects || event.url;
-      this.showNavbar = !url.includes('/login');
+    this.router.events
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe((event: any) => {
+        const url = event.urlAfterRedirects || event.url;
+        this.showNavbar = !url.includes('/login');
 
-      if (this.showNavbar && this.authService.loggedIn) {
-        this.transactionService.getAccountDetails(this.authService.accountId!).subscribe({
-          next: (account) => this.holderName.set(account.holderName),
-          error: () => this.holderName.set(this.username) // Fallback to username
-        });
-      }
+        if (this.authService.loggedIn) {
+          this.transactionService.getAccountDetails(this.authService.accountId!).subscribe({
+            next: (account) => this.holderName.set(account.holderName),
+            error: () => this.holderName.set(this.authService.accountId || "User")
+          });
+        }
     });
-  }
-
-  get username(): string {
-    const name = this.authService.accountId;
-    return name ? name.charAt(0).toUpperCase() + name.slice(1) : 'User';
   }
 
   logout(): void {
     this.authService.logout();
+    this.router.navigate(['/login']);
   }
 }
