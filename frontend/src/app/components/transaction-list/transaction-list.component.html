@@ -86,12 +86,12 @@
                     <label class="filter-option d-flex align-items-center gap-2 p-2 rounded">
                       <input type="radio" name="typeFilter" [checked]="selectedTypeFilters() === 'SEND'"
                         (change)="setTypeFilter('SEND')">
-                      Send
+                      Debited
                     </label>
                     <label class="filter-option d-flex align-items-center gap-2 p-2 rounded">
                       <input type="radio" name="typeFilter" [checked]="selectedTypeFilters() === 'RECEIVE'"
                         (change)="setTypeFilter('RECEIVE')">
-                      Received
+                      Credited
                     </label>
                   </div>
                 </div>
@@ -131,11 +131,11 @@
               </td>
               <td class="py-2 border-0">
                 <span class="text-dark small fw-medium">
-                  {{ transaction.type === 'SEND' ? 'Send' : 'Received' }}
+                  {{ transaction.type === 'SEND' ? 'Debited' : 'Credited' }}
                 </span>
               </td>
               <td class="py-2 fw-bold border-0 text-dark">
-                {{ transaction.amount | currency:'INR' }}
+                {{ transaction.type === 'SEND' ? '-' : '+' }} {{ transaction.amount | currency:'INR' }}
               </td>
               <td class="py-2 border-0">
                 <span class="fw-bold small"

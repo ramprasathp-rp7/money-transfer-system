@@ -18,8 +18,10 @@
 
 .transfer-grid {
     display: grid;
-    grid-template-columns: 1fr 350px;
+    grid-template-columns: 1.5fr 1fr;
     height: 100%;
+    max-width: 960px;
+    margin: 0 auto;
 }
 
 .form-side {
@@ -128,7 +130,7 @@
 @media (max-width: 992px) {
     .transfer-grid {
         grid-template-columns: 1fr;
-        overflow-y: auto;
+        overflow-y: visible;
     }
 
     .info-side {

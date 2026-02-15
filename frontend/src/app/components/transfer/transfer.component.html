@@ -92,8 +92,9 @@
                     </div>
 
                     <div class="mb-4">
-                        <label for="amount" class="form-label text-dark fw-bold small text-uppercase mb-1">Amount to
-                            Transfer</label>
+                        <label for="amount" class="form-label text-dark fw-bold small text-uppercase mb-1">
+                            Amount to Transfer
+                        </label>
                         <div class="input-group">
                             <span class="input-group-text fw-bold">&#8377;</span>
                             <input type="number" id="amount" name="amount" [(ngModel)]="transferRequest.amount"
@@ -108,7 +109,7 @@
                         class="btn btn-primary w-100 py-3 rounded-pill shadow-sm fw-bold transition-all"
                         style="background-color: #0369a1; border: none;">
                         <span *ngIf="isLoading()" class="spinner-border spinner-border-sm me-2"></span>
-                        {{ isLoading() ? 'Transferring...' : 'Send Money Now' }}
+                        {{ isLoading() ? 'Processing' : 'Pay' }}
                     </button>
                 </form>
             </div>
@@ -122,8 +123,7 @@
                 <div class="step-number">1</div>
                 <div>
                     <p class="fw-bold mb-1 small uppercase">Enter Receiver ID</p>
-                    <p class="text-muted small mb-0">Provide the unique account identifier of the person you
-                        want to pay.</p>
+                    <p class="text-muted small mb-0">Provide the unique account identifier of the person you want to pay.</p>
                 </div>
             </div>
 
@@ -131,8 +131,7 @@
                 <div class="step-number">2</div>
                 <div>
                     <p class="fw-bold mb-1 small uppercase">Specify Amount</p>
-                    <p class="text-muted small mb-0">Input the exact amount. Make sure it's within your
-                        available balance.</p>
+                    <p class="text-muted small mb-0">Input the exact amount. Make sure it's within your available balance.</p>
                 </div>
             </div>
 
@@ -140,8 +139,7 @@
                 <div class="step-number">3</div>
                 <div>
                     <p class="fw-bold mb-1 small uppercase">Verify & Send</p>
-                    <p class="text-muted small mb-0">Double check all details before clicking the confirm
-                        button.</p>
+                    <p class="text-muted small mb-0">Double check all details before clicking the confirm button.</p>
                 </div>
             </div>
 
