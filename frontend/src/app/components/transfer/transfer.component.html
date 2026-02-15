@@ -80,7 +80,7 @@
                 <form [formGroup]="transferForm" (ngSubmit)="onSubmit()">
                     <div class="mb-3">
                         <label for="toAccountId"
-                            class="form-label text-dark fw-bold small text-uppercase mb-1">Recipient Account ID</label>
+                            class="form-label text-dark fw-bold small text-uppercase mb-1">Recipient Account No.</label>
                         <div class="input-group">
                             <span class="input-group-text"><i class="bi bi-person-badge"></i></span>
                             <input type="text" id="toAccountId" formControlName="toAccountId" name="toAccountId" class="form-control" placeholder="XXXX-XXXX-XXXX">
@@ -89,7 +89,10 @@
                             <div *ngIf="submitted() || transferForm.controls['toAccountId']?.touched">
                                 <div *ngIf="transferForm.controls['toAccountId']?.errors?.['required']">Account no. is required</div>
                                 <div *ngIf="transferForm.controls['toAccountId']?.errors?.['minlength'] || transferForm.controls['toAccountId']?.errors?.['maxLength']">
-                                    Account number must be 12 digits
+                                    Account no. must be 12 digits
+                                </div>
+                                <div *ngIf="transferForm.controls['toAccountId']?.errors?.['notEqual']">
+                                    Cannot be your own account no.
                                 </div>
                             </div>
                         </div>
@@ -97,7 +100,7 @@
 
                     <div class="mb-4">
                         <label for="amount" class="form-label text-dark fw-bold small text-uppercase mb-1">
-                            Amount to Transfer
+                            Amount
                         </label>
                         <div class="input-group">
                             <span class="input-group-text fw-bold">&#8377;</span>
@@ -106,7 +109,7 @@
                         <div class="error-message small text-danger">
                             <div *ngIf="submitted() || transferForm.controls['amount']?.touched">
                                 <div *ngIf="transferForm.controls['amount']?.errors?.['required']">Amount is required</div>
-                                <div *ngIf="transferForm.controls['amount']?.errors?.['min'] || transferForm.controls['amount']?.errors?.['maxLength']">
+                                <div *ngIf="transferForm.controls['amount']?.errors?.['min']">
                                     Minimus possible amount is {{ '0.01' | currency:'INR' }}
                                 </div>
                             </div>

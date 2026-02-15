@@ -27,14 +27,14 @@
                         <p class="text-muted small">Secure access to your account</p>
                     </div>
                     <div class="mb-3">
-                        <label for="username" class="form-label fw-bold text-dark">Account No</label>
+                        <label for="username" class="form-label fw-bold text-dark">Account No.</label>
                         <input type="text" id="username" formControlName="username"
                             class="form-control form-control-lg border-2 shadow-none" placeholder="XXXX-XXXX-XXXX">
                         <div class="error-message text-danger">
                             <div *ngIf="submitted() || loginForm.controls['username']?.touched">
                                 <div *ngIf="loginForm.controls['username']?.errors?.['required']">Account no. is required</div>
                                 <div *ngIf="loginForm.controls['username']?.errors?.['minlength'] || loginForm.controls['username']?.errors?.['maxLength']">
-                                    Account number must be 12 digits
+                                    Account no. must be 12 digits
                                 </div>
                             </div>
                         </div>

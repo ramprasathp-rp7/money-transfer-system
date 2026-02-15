@@ -2,13 +2,13 @@ import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
-import { Account } from '../../models/account.model';
 import { TransferRequest } from '../../models/transfer-request.model';
 import { TransferResponse } from '../../models/transfer-response.model';
 
 import { AuthService } from '../../services/auth.service';
 import { AccountService } from 'app/services/account.service';
 import { TransferService } from '../../services/transfer.service';
+import { notEqual } from 'app/validators/matches.validator';
 
 @Component({
     selector: 'app-transfer',
@@ -42,7 +42,7 @@ export class TransferComponent implements OnInit {
 
     ngOnInit(): void {
         this.transferForm = this.fb.group({ 
-            toAccountId: ['', [Validators.required, Validators.minLength(14), Validators.maxLength(14)]],
+            toAccountId: ['', [Validators.required, Validators.minLength(14), Validators.maxLength(14), notEqual(this.authService.accountId!)]],
             amount: [null, [Validators.required, Validators.min(0.01)]]
          })
 
