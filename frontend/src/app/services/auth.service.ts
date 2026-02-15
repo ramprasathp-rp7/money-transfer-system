@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable, catchError, tap, throwError } from 'rxjs';
+import { environment } from 'environments/environment';
 
 @Injectable({
     providedIn: 'root'
 })
 export class AuthService {
-    private readonly API_ENDPOINT = 'http://localhost:8080/api/v1/auth/login';
+    private readonly API_ENDPOINT = environment.baseUrl + '/auth/login';
 
     public accountId: string | null = null;
     public authToken: string | null = null;

@@ -4,12 +4,13 @@ import { Observable } from 'rxjs';
 
 import { TransferRequest } from '../models/transfer-request.model';
 import { TransferResponse } from '../models/transfer-response.model';
+import { environment } from 'environments/environment';
 
 @Injectable({
     providedIn: 'root'
 })
 export class TransferService {
-    private readonly API_ENDPOINT = 'http://localhost:8080/api/v1/transfers';
+    private readonly API_ENDPOINT = environment.baseUrl + '/transfers';
 
     constructor(private http: HttpClient) { }
 

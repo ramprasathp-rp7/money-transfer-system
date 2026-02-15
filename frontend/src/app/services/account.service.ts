@@ -5,12 +5,13 @@ import { Observable } from 'rxjs';
 import { Account } from '../models/account.model';
 import { Transaction } from '../models/transaction.model';
 import { AccountBalance } from 'app/models/account-balance.model';
+import { environment } from 'environments/environment';
 
 @Injectable({
     providedIn: 'root'
 })
 export class AccountService {
-    private readonly API_ENDPOINT = 'http://localhost:8080/api/v1/accounts';
+    private readonly API_ENDPOINT = environment.baseUrl + '/accounts';
 
     constructor(private http: HttpClient) { }
 

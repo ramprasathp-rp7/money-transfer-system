@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Transaction } from '../../models/transaction.model';
 import { AuthService } from '../../services/auth.service';
 import { AccountService } from 'app/services/account.service';
+import { environment } from 'environments/environment';
 
 @Component({
     selector: 'app-transaction-list',
@@ -12,7 +13,7 @@ import { AccountService } from 'app/services/account.service';
     styleUrls: ['./transaction-list.component.css']
 })
 export class TransactionListComponent implements OnInit {
-    readonly RECORD_PER_PAGE=9;
+    readonly RECORD_PER_PAGE=environment.pageLimit;
 
     protected Math = Math;
     errorMessage = signal<string>('');
