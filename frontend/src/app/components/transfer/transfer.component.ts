@@ -21,7 +21,7 @@ export class TransferComponent implements OnInit {
     transferRequest: TransferRequest = {
         fromAccountId: '',
         toAccountId: '',
-        amount: 0,
+        amount: null!,
         idempotencyKey: ''
     };
 
@@ -92,11 +92,8 @@ export class TransferComponent implements OnInit {
                 this.successMessage.set('Transfer successful!');
                 this.lastTransaction.set(response);
                 this.isLoading.set(false);
-                // Reset form but keep sender details and generate new key
-                this.transferRequest.toAccountId = '';
-                this.transferRequest.amount = 0;
-                this.transferRequest.idempotencyKey = crypto.randomUUID();
-                // Refresh sender details to show updated balance
+
+                // refresh account details to show updated balance
                 this.fetchSenderDetails();
             },
             error: (error) => {
@@ -108,10 +105,6 @@ export class TransferComponent implements OnInit {
                     amount: this.transferRequest.amount
                 });
                 this.isLoading.set(false);
-
-                // IMPORTANT: Generate new idempotency key even on failure 
-                // so the next attempt is a fresh transaction
-                this.transferRequest.idempotencyKey = crypto.randomUUID();
             }
         });
     }
@@ -121,7 +114,9 @@ export class TransferComponent implements OnInit {
         this.failedTransaction.set(null);
         this.successMessage.set('');
         this.errorMessage.set('');
-        this.transferRequest.toAccountId = '';
-        this.transferRequest.amount = 0;
+        this.transferRequest.amount = null!;
+
+        // generate new idempotencyKey
+        this.transferRequest.idempotencyKey = crypto.randomUUID();
     }
 }
