@@ -33,12 +33,10 @@ public class EtlController {
             @RequestParam LocalDateTime start,
             @RequestParam LocalDateTime end
     ) throws Exception {
-        log.error("Uploading csv files into the snowflake warehouse");
-        List<TransactionLog> data =
-                repo.findByDateRange(start, end);
+        log.info("Uploading csv files into the snowflake warehouse");
 
+        List<TransactionLog> data = repo.findByDateRange(start, end);
         File csv = csvService.writeCsv(data);
-
         snowflakeService.uploadAndCopy(csv);
 
         return "Upload successful: " + data.size() + " rows";

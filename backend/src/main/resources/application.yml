@@ -50,10 +50,10 @@ dummy:
 # Snowflake (JDBC ONLY)
 # ---------------------------
 snowflake:
+  enabled: true
   url: jdbc:snowflake://srztpza-sq01845.snowflakecomputing.com
   user: RAAHULKUMXR
   password: Raahul16022005
-  enabled: true
   database: MONEY_TRANSFER_DW
   schema: ANALYTICS
   warehouse: COMPUTE_WH

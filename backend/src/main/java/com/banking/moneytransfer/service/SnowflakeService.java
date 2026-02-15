@@ -22,17 +22,12 @@ public class SnowflakeService {
              Statement stmt = conn.createStatement()) {
 
             stmt.execute("REMOVE @TRANSFER_STAGE");
-            // upload CSV to stage
-            stmt.execute("PUT file://" + file.getAbsolutePath() +
-  " @TRANSFER_STAGE OVERWRITE = TRUE");
-
-            // bulk load: map CSV columns to warehouse fact table
+            stmt.execute("PUT file://" + file.getAbsolutePath() + " @TRANSFER_STAGE OVERWRITE = TRUE");
             stmt.execute("""
                 COPY INTO FACT_TRANSACTIONS (ACCOUNT_FROM_KEY,ACCOUNT_TO_KEY,AMOUNT,STATUS,DATE_KEY)
                 FROM @TRANSFER_STAGE
                 FILE_FORMAT = CSV_FORMAT
-                ON_ERROR='CONTINUE'
-            """);
+                ON_ERROR='CONTINUE'""");
         }
     }
 }
