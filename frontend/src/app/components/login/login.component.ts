@@ -3,7 +3,6 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { AuthService } from '../../services/auth.service';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { single } from 'rxjs';
 
 @Component({
     selector: 'app-login',
@@ -15,6 +14,7 @@ import { single } from 'rxjs';
 export class LoginComponent {
     loginForm!: FormGroup;
     submitted = signal(false);
+    isLoading = signal(false);
     errorMessage = signal("");
 
     constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) { }
@@ -27,22 +27,25 @@ export class LoginComponent {
     }
 
     onSubmit() {
+        // set to true
+        this.submitted.set(true)
+
         if (this.loginForm.valid) {
-            this.submitted.set(true)
+            this.isLoading.set(true)
             this.errorMessage.set("")
             const { username, password } = this.loginForm.value;
             this.authService.login(username, password).subscribe({
                 next: (response) => {
-                    this.submitted.set(false)
                     if (response.ok) {
                         this.router.navigate(['/transactions']);
                     } else {
                         this.errorMessage.set("Invalid credentials")
                     }
+                    this.isLoading.set(false)
                 },
                 error: (err) => {
-                    this.submitted.set(false)
                     this.errorMessage.set("Invalid credentials")
+                    this.isLoading.set(false)
                 }
             });
         }

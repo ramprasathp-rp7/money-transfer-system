@@ -55,9 +55,9 @@
                     </div>
 
                     <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-dark btn-lg rounded-3 fw-bold py-3" [disabled]="submitted()">
-                            <span *ngIf="!submitted()">Login to Account</span>
-                            <span *ngIf="submitted()" class="spinner-border spinner-border-sm me-2"></span>
+                        <button type="submit" class="btn btn-dark btn-lg rounded-3 fw-bold py-3" [disabled]="isLoading()">
+                            <span *ngIf="!isLoading()">Login to Account</span>
+                            <span *ngIf="isLoading()" class="spinner-border spinner-border-sm me-2"></span>
                         </button>
                     </div>
 
