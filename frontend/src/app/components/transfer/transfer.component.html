@@ -3,7 +3,7 @@
         <!-- Left Side: Form -->
         <div class="form-side">
             <!-- SUCCESS VIEW -->
-            <div *ngIf="lastTransaction()"
+            <div *ngIf="transferResponse()"
                 class="success-screen fadeIn d-flex flex-column align-items-center text-center py-4">
                 <div class="mb-3">
                     <div class="success-icon-wrapper mb-2">
@@ -15,17 +15,18 @@
                 <div class="receipt-details w-100 rounded-4 p-4 mb-4 text-start">
                     <div class="d-flex justify-content-between mb-3">
                         <span class="text-muted">Transaction ID</span>
-                        <span class="font-monospace text-dark fw-bold">{{ lastTransaction()?.transactionId
+                        <span class="font-monospace text-dark fw-bold">{{ transferResponse()?.transactionId
                             }}</span>
                     </div>
                     <div class="d-flex justify-content-between mb-3">
                         <span class="text-muted">Recipient</span>
-                        <span class="fw-bold text-dark">{{ lastTransaction()?.creditedTo }}</span>
+                        <span class="fw-bold text-dark">{{ transferResponse()?.creditedTo }}</span>
                     </div>
                     <div class="d-flex justify-content-between border-top pt-3">
                         <span class="text-muted fw-bold">Amount Sent</span>
-                        <span class="text-success fw-bold h4 mb-0">&#8377; {{ lastTransaction()?.amount |
-                            number:'1.0-0' }}</span>
+                        <span class="text-success fw-bold h4 mb-0">
+                            {{ transferResponse()?.amount | currency:'INR' }}
+                        </span>
                     </div>
                 </div>
 
@@ -58,8 +59,9 @@
                     </div>
                     <div class="d-flex justify-content-between border-top pt-2">
                         <span class="text-muted small">Amount</span>
-                        <span class="text-dark fw-bold">&#8377; {{ failedTransaction()?.amount | number:'1.0-0'
-                            }}</span>
+                        <span class="text-dark fw-bold">
+                            {{ failedTransaction()?.amount | currency:'INR' }}
+                        </span>
                     </div>
                 </div>
 
@@ -69,25 +71,27 @@
             </div>
 
             <!-- FORM VIEW -->
-            <div *ngIf="!lastTransaction() && !failedTransaction()" class="form-screen fadeIn">
+            <div *ngIf="!transferResponse() && !failedTransaction()" class="form-screen fadeIn">
                 <div class="mb-4">
                     <h2 class="form-title text-dark">Send Money</h2>
                     <p class="form-subtitle">Secure, instant bank-to-bank transfer.</p>
                 </div>
 
-                <div *ngIf="errorMessage()" class="alert alert-danger p-3 border-0 rounded-4 mb-4 fadeIn">
-                    <i class="bi bi-exclamation-circle-fill me-2"></i>{{ errorMessage() }}
-                </div>
-
-                <form (ngSubmit)="onSubmit()" #transferForm="ngForm">
+                <form [formGroup]="transferForm" (ngSubmit)="onSubmit()">
                     <div class="mb-3">
                         <label for="toAccountId"
                             class="form-label text-dark fw-bold small text-uppercase mb-1">Recipient Account ID</label>
                         <div class="input-group">
                             <span class="input-group-text"><i class="bi bi-person-badge"></i></span>
-                            <input type="text" id="toAccountId" name="toAccountId"
-                                [(ngModel)]="transferRequest.toAccountId" class="form-control" required
-                                placeholder="Enter Account ID">
+                            <input type="text" id="toAccountId" formControlName="toAccountId" name="toAccountId" class="form-control" placeholder="XXXX-XXXX-XXXX">
+                        </div>
+                        <div class="error-message small text-danger">
+                            <div *ngIf="submitted() || transferForm.controls['toAccountId']?.touched">
+                                <div *ngIf="transferForm.controls['toAccountId']?.errors?.['required']">Account no. is required</div>
+                                <div *ngIf="transferForm.controls['toAccountId']?.errors?.['minlength'] || transferForm.controls['toAccountId']?.errors?.['maxLength']">
+                                    Account number must be 12 digits
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -97,19 +101,26 @@
                         </label>
                         <div class="input-group">
                             <span class="input-group-text fw-bold">&#8377;</span>
-                            <input type="number" id="amount" name="amount" [(ngModel)]="transferRequest.amount"
-                                class="form-control fw-bold text-primary" required min="1" placeholder="0.00">
+                            <input type="number" id="amount" formControlName="amount" name="amount" class="form-control fw-bold text-primary" placeholder="0.00">
+                        </div>
+                        <div class="error-message small text-danger">
+                            <div *ngIf="submitted() || transferForm.controls['amount']?.touched">
+                                <div *ngIf="transferForm.controls['amount']?.errors?.['required']">Amount is required</div>
+                                <div *ngIf="transferForm.controls['amount']?.errors?.['min'] || transferForm.controls['amount']?.errors?.['maxLength']">
+                                    Minimus possible amount is {{ '0.01' | currency:'INR' }}
+                                </div>
+                            </div>
                         </div>
                         <div class="form-text mt-1 text-muted small px-1">
                             <i class="bi bi-info-circle me-1"></i> Ensure balance covers the amount.
                         </div>
                     </div>
 
-                    <button type="submit" [disabled]="!transferForm.form.valid || isLoading()"
+                    <button type="submit" [disabled]="isLoading()"
                         class="btn btn-primary w-100 py-3 rounded-pill shadow-sm fw-bold transition-all"
                         style="background-color: #0369a1; border: none;">
                         <span *ngIf="isLoading()" class="spinner-border spinner-border-sm me-2"></span>
-                        {{ isLoading() ? 'Processing' : 'Pay' }}
+                        <span>{{ isLoading() ? 'Processing' : 'Pay' }}</span>
                     </button>
                 </form>
             </div>
