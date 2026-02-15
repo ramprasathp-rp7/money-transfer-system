@@ -24,7 +24,7 @@ export class TransferComponent implements OnInit {
 
     transferResponse = signal<TransferResponse | null>(null);
 
-    account = signal<Account | null>(null);
+    balance = signal<number>(0.0);
     showBalance = signal<boolean>(false);
 
     failedTransaction = signal<any | null>(null);
@@ -48,16 +48,13 @@ export class TransferComponent implements OnInit {
 
         if (!this.authService.loggedIn) return;
 
-        // this.transferRequest.fromAccountId = this.authService.accountId!;
-        // this.transferRequest.idempotencyKey = crypto.randomUUID();
-
         this.fetchSenderDetails();
     }
 
     fetchSenderDetails(): void {
-        this.accountService.fetchAccount(this.authService.accountId!).subscribe({
-            next: (account) => {
-                this.account.set(account);
+        this.accountService.fetchBalance(this.authService.accountId!).subscribe({
+            next: (res) => {
+                this.balance.set(res.balance);
             }
         });
     }

@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 
 import { Account } from '../models/account.model';
 import { Transaction } from '../models/transaction.model';
+import { AccountBalance } from 'app/models/account-balance.model';
 
 @Injectable({
     providedIn: 'root'
@@ -15,6 +16,10 @@ export class AccountService {
 
     fetchAccount(accountId: string): Observable<Account> {
         return this.http.get<Account>(`${this.API_ENDPOINT}/${accountId}`);
+    }
+
+    fetchBalance(accountId: string): Observable<AccountBalance> {
+        return this.http.get<AccountBalance>(`${this.API_ENDPOINT}/${accountId}/balance`);
     }
 
     fetchTransactions(accountId: string): Observable<Transaction[]> {
