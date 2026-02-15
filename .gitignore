@@ -49,6 +49,11 @@ dist/
 nbdist/
 .nb-gradle/
 
+# Environment variables
+.env
+.env.local
+.env.*.local
+
 # Spring Boot
 spring-boot-starter-parent/
 
@@ -75,3 +80,5 @@ frontend/yarn-error.log*
 
 # Snowflake credentials
 snowflake/credentials/
+
+*.csv

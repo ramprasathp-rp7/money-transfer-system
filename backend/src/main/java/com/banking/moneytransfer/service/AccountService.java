@@ -23,8 +23,8 @@ import java.util.stream.Stream;
 /**
  * Service class for account operations
  */
-@Service
 @Slf4j
+@Service
 public class AccountService {
 
     @Autowired

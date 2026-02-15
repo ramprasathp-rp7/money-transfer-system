@@ -3,7 +3,7 @@ spring:
     name: money-transfer-system
 
   datasource:
-    # Append &allowPublicKeyRetrieval=true to the end of the URL
+    # MySQL connection using environment variables
     url: jdbc:mysql://localhost:3306/money_transfer_db?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
     username: root
     password: Root123$
@@ -45,3 +45,17 @@ cors:
 
 dummy:
   enable: true
+
+# ---------------------------
+# Snowflake (JDBC ONLY)
+# ---------------------------
+snowflake:
+  url: jdbc:snowflake://srztpza-sq01845.snowflakecomputing.com
+  user: RAAHULKUMXR
+  password: Raahul16022005
+  enabled: true
+  database: MONEY_TRANSFER_DW
+  schema: ANALYTICS
+  warehouse: COMPUTE_WH
+
+  
