@@ -1,7 +1,6 @@
-import { Component, OnInit, signal, computed, effect } from '@angular/core';
+import { Component, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Transaction } from '../../models/transaction.model';
-import { Account } from '../../models/account.model';
 import { AuthService } from '../../services/auth.service';
 import { AccountService } from 'app/services/account.service';
 
@@ -16,7 +15,6 @@ export class TransactionListComponent implements OnInit {
     readonly RECORD_PER_PAGE=9;
 
     protected Math = Math;
-    senderAccount = signal<Account | null>(null);
     errorMessage = signal<string>('');
 
     // Pagination
@@ -85,23 +83,9 @@ export class TransactionListComponent implements OnInit {
 
     ngOnInit(): void {
         if (this.authService.loggedIn) {
-            this.fetchAccountDetails();
             this.fetchTransactions();
         } else {
             this.errorMessage.set("Session expired. Please re-login.")
-        }
-    }
-
-    fetchAccountDetails(): void {
-        if (this.authService.accountId) {
-            this.accountService.fetchAccount(this.authService.accountId).subscribe({
-                next: (account) => {
-                    this.senderAccount.set(account);
-                },
-                error: (_) => {
-                    this.errorMessage.set("Invalid credentials. Please re-login")
-                }
-            });
         }
     }
 
