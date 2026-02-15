@@ -64,16 +64,11 @@ public class Account {
      */
     public void debit(BigDecimal amount) {
         if (!isActive()) {
-            throw new AccountNotActiveException(
-                    "Account " + id + " is not active. Current status: " + status
-            );
+            throw new AccountNotActiveException("Account " + id + " is not active");
         }
 
         if (balance.compareTo(amount) < 0) {
-            throw new InsufficientBalanceException(
-                    "Insufficient balance in account " + id +
-                            ". Available: " + balance + ", Required: " + amount
-            );
+            throw new InsufficientBalanceException("Insufficient fund in account " + id);
         }
 
         this.balance = this.balance.subtract(amount);
@@ -87,9 +82,7 @@ public class Account {
      */
     public void credit(BigDecimal amount) {
         if (!isActive()) {
-            throw new AccountNotActiveException(
-                    "Account " + id + " is not active. Current status: " + status
-            );
+            throw new AccountNotActiveException("Account " + id + " is not active");
         }
 
         this.balance = this.balance.add(amount);

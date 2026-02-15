@@ -15,7 +15,7 @@ public class DuplicateTransferException extends RuntimeException {
 
     // Static factory method to handle the idempotency key logic
     public static DuplicateTransferException withKey(String idempotencyKey) {
-        return new DuplicateTransferException("Duplicate transfer detected with idempotency key: " + idempotencyKey);
+        return new DuplicateTransferException("Duplicate transfer with idempotency key: " + idempotencyKey);
     }
 
     public int getErrorCode() {

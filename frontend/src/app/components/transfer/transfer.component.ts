@@ -25,11 +25,12 @@ export class TransferComponent implements OnInit {
         idempotencyKey: ''
     };
 
-    senderAccount = signal<Account | null>(null);
-    maskedAccountId = signal<string>('');
-    errorMessage = signal<string>('');
+    account = signal<Account | null>(null);
+
     successMessage = signal<string>('');
+    errorMessage = signal<string>('');
     lastTransaction = signal<TransferResponse | null>(null);
+
     failedTransaction = signal<any | null>(null);
     showBalance = signal<boolean>(false);
     isLoading = signal<boolean>(false);
@@ -45,22 +46,18 @@ export class TransferComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        // Set from account ID from authenticated user
-        this.transferRequest.fromAccountId = this.authService.accountId || '';
+        if (!this.authService.loggedIn) return;
 
-        // Generate Idempotency Key
+        this.transferRequest.fromAccountId = this.authService.accountId!;
         this.transferRequest.idempotencyKey = crypto.randomUUID();
-        console.log('Idempotency Key generated:', this.transferRequest.idempotencyKey);
 
-        // Fetch Sender Account Details
         this.fetchSenderDetails();
     }
 
     fetchSenderDetails(): void {
         this.accountService.fetchAccount(this.transferRequest.fromAccountId).subscribe({
             next: (account) => {
-                this.senderAccount.set(account);
-                this.maskedAccountId.set(this.maskAccountId(account.id));
+                this.account.set(account);
             },
             error: (error) => {
                 console.error('Error fetching sender details:', error);
@@ -69,14 +66,8 @@ export class TransferComponent implements OnInit {
         });
     }
 
-    maskAccountId(accountId: string): string {
-        if (!accountId || accountId.length < 4) return accountId;
-        const last4 = accountId.slice(-4);
-        return `****${last4}`;
-    }
-
     onSubmit(): void {
-        if (!this.senderAccount()) {
+        if (!this.account()) {
             this.errorMessage.set('Sender details not loaded cannot proceed');
             return;
         }
@@ -99,7 +90,7 @@ export class TransferComponent implements OnInit {
             error: (error) => {
                 console.error('Transfer failed:', error);
                 this.failedTransaction.set({
-                    message: error.error?.message || 'Transfer could not be processed.',
+                    message: error.error?.error || "Transaction failed due to unknown exception. Please contact customer support.",
                     timestamp: new Date(),
                     toAccountId: this.transferRequest.toAccountId,
                     amount: this.transferRequest.amount
