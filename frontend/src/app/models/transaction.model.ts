@@ -3,6 +3,7 @@ export interface Transaction {
     accountId: string;
     holderName: string;
     amount: number;
-    status: string;
+    status: 'SUCCESS' | 'FAILED';
+    failureReason: string;
     createdOn: string;
 }

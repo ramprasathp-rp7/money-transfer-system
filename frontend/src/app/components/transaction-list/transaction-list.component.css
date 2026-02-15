@@ -1,91 +1,180 @@
-.avatar-circle {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  font-size: 1.25rem;
-  transition: transform 0.2s ease-in-out;
+.page-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 0.5rem 15vw;
+  overflow: hidden !important;
+  background-color: #ffffff;
+  height: calc(100vh - 72px);
 }
 
-.list-group-item:hover .avatar-circle {
-  transform: scale(1.1);
+.card {
+  border: none !important;
+  border-radius: 16px !important;
+  background: #ffffff;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
-.list-group-item {
-  transition: background-color 0.2s ease;
+.card-header {
+  border-bottom: none !important;
+  padding: 1.5rem 0 !important;
 }
 
-.list-group-item:hover {
-  background-color: #f8f9fa !important;
+.card-body {
+  padding: 0;
+  flex: 1;
+  overflow: hidden !important;
 }
 
-.badge {
+.table-responsive {
+  overflow: hidden !important;
+  border: none !important;
+}
+
+.table {
+  margin-bottom: 0;
+  table-layout: fixed;
+}
+
+.table thead th {
+  background-color: #f8fafc;
+  color: #64748b;
+  font-weight: 700;
   font-size: 0.75rem;
-  letter-spacing: 0.02em;
+  padding: 1rem 1.5rem;
 }
 
-/* Filter Menu Styles */
+.table tbody td {
+  padding: 0.75rem 1.5rem;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.status-dot-wrapper {
+  width: fit-content;
+  border: 1px solid #e2e8f0;
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.page-link {
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 8px !important;
+  /* Square-ish profile */
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 !important;
+  background: #ffffff;
+  color: #1e293b !important;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.page-link:hover {
+  background: #f1f5f9 !important;
+  border-color: #cbd5e1 !important;
+}
+
+.page-item.active .page-link {
+  background-color: #0369a1 !important;
+  border-color: #0369a1 !important;
+  color: #ffffff !important;
+}
+
+.page-item.disabled .page-link {
+  background-color: #ffffff !important;
+  opacity: 0.4;
+}
+
+.fadeIn {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .filter-dropdown {
   position: absolute;
   top: 100%;
   right: 0;
   z-index: 1050;
+  background: white;
+  box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.2);
+  border: 1px solid #e2e8f0;
+  min-width: 320px;
   overflow: hidden;
+  margin-top: 10px;
 }
 
 .filter-sidebar {
-  height: 100%;
+  background-color: #f8fafc;
+  width: 130px;
 }
 
 .filter-cat-btn {
-  border: none;
   background: transparent;
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: #6c757d;
+  color: #64748b;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-bottom: 1px solid #f1f5f9;
   transition: all 0.2s;
-  outline: none;
 }
 
 .filter-cat-btn:hover {
-  background-color: #e9ecef;
+  background: #f1f5f9;
 }
 
 .filter-cat-btn.active {
-  background-color: white;
-  color: #0d6efd;
-  border-right: 3px solid #0d6efd !important;
+  background: white;
+  color: #0369a1;
+  border-left: 3px solid #0369a1;
 }
 
 .filter-option {
   cursor: pointer;
-  font-size: 0.9rem;
-  transition: background-color 0.2s;
-  user-select: none;
+  transition: background 0.2s;
+  font-size: 0.875rem;
 }
 
 .filter-option:hover {
-  background-color: #f8f9fa;
+  background: #f8fafc;
 }
 
+.filter-option input[type="radio"],
 .filter-option input[type="checkbox"] {
   width: 16px;
   height: 16px;
   cursor: pointer;
 }
 
-/* Animation */
-.fadeIn {
-  animation: fadeIn 0.15s ease-out;
+/* Reduced spacing for header section */
+.mb-2 {
+  margin-bottom: 0.5rem !important;
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-5px);
-  }
+h2.h5 {
+  font-size: 1.15rem;
+}
 
-  to {
-    opacity: 1;
-    transform: translateY(0);
+@media (max-width: 992px) {
+  .page-container {
+    padding: 0.5em 1em;
   }
 }

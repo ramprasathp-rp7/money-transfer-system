@@ -6,6 +6,7 @@ import com.banking.moneytransfer.dto.TransactionLogResponse;
 import com.banking.moneytransfer.exception.AccountNotFoundException;
 import com.banking.moneytransfer.model.entity.Account;
 import com.banking.moneytransfer.model.enums.AccountStatus;
+import com.banking.moneytransfer.model.enums.TransactionStatus;
 import com.banking.moneytransfer.model.enums.TransactionType;
 import com.banking.moneytransfer.repository.AccountRepository;
 import com.banking.moneytransfer.repository.TransactionLogRepository;
@@ -100,6 +101,7 @@ public class AccountService {
                                         .build()),
                         account.getReceivedTransactions()
                                 .stream()
+                                .filter(t -> t.getStatus().equals(TransactionStatus.SUCCESS))
                                 .map(t -> TransactionLogResponse.builder()
                                         .accountId(t.getFromAccount().getId())
                                         .holderName(t.getFromAccount().getHolderName())
