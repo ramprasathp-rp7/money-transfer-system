@@ -21,8 +21,10 @@ public class SnowflakeService {
         try (Connection conn = snowflakeDataSource.getConnection();
              Statement stmt = conn.createStatement()) {
 
+            stmt.execute("REMOVE @TRANSFER_STAGE");
             // upload CSV to stage
-            stmt.execute("PUT file://" + file.getAbsolutePath() + " @TRANSFER_STAGE");
+            stmt.execute("PUT file://" + file.getAbsolutePath() +
+  " @TRANSFER_STAGE OVERWRITE = TRUE");
 
             // bulk load: map CSV columns to warehouse fact table
             stmt.execute("""
