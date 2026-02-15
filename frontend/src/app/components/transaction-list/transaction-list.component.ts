@@ -24,7 +24,7 @@ export class TransactionListComponent implements OnInit {
 
     // Filter Menu UI
     isFilterMenuOpen = signal<boolean>(false);
-    activeFilterCategory = signal<'Status' | 'Type' | 'Date'>('Status');
+    activeFilterCategory = signal<'Status' | 'Type' | 'Date'>('Date');
 
     // Filter Options
     searchTerm = signal<string>('');
@@ -40,7 +40,10 @@ export class TransactionListComponent implements OnInit {
         // Apply Search Filter (HolderName)
         if (this.searchTerm().length != 0) {
             const term = this.searchTerm().toLowerCase();
-            data = data.filter(t => t.holderName.toLowerCase().includes(term));
+            data = data.filter(t => 
+                t.holderName.toLowerCase().includes(term)
+                || t.amount.toString().includes(term)
+            );
         }
 
         // Apply Status Filter
@@ -66,6 +69,7 @@ export class TransactionListComponent implements OnInit {
         return (
             (this.selectedStatusFilters() !== null ? 1 : 0)
             + (this.selectedTypeFilters() !== null ? 1 : 0)
+            + (this.dateSortOrder() !== 'desc' ? 1 : 0)
         )
     })
     totalPages = computed(() => Math.ceil(this.filteredTransactions().length / this.RECORD_PER_PAGE) || 1);
@@ -127,6 +131,10 @@ export class TransactionListComponent implements OnInit {
         this.selectedTypeFilters.set(null);
         this.dateSortOrder.set('desc');
         this.currentPage.set(1);
+        
+        // Typical user behavior on clearFilter would be to close
+        // the filter menu, therefore we call toggleFilterMenu
+        this.toggleFilterMenu()
     }
 
     setStatusFilter(value: 'SUCCESS' | 'FAILED'): void {

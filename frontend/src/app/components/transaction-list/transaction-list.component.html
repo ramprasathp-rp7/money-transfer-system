@@ -1,8 +1,5 @@
-<div class="page-container pt-0">
-
+<div class="page-container">
   <div class="card border-0 shadow-sm rounded-4 animate-up">
-
-
     <div class="card-header bg-white border-0 py-3 px-4">
       <div class="d-flex justify-content-between align-items-center mb-2">
         <h2 class="h5 fw-bold text-dark m-0">Recent Transactions</h2>
@@ -10,8 +7,8 @@
           <div class="search-box position-relative">
             <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-secondary"
               style="font-size: 0.8rem;"></i>
-            <input type="text" class="form-control form-control-sm border bg-white rounded-pill ps-5 pe-4 shadow-none"
-              placeholder="Search for sender..." (input)="setSearchTerm($event)" [value]="searchTerm()">
+            <input type="text" class="form-control form-control-sm border bg-white rounded-pill ps-5 pe-3 shadow-none"
+              placeholder="Search by name, amount" (input)="setSearchTerm($event)" [value]="searchTerm()">
           </div>
 
           <!-- Filter Button with Nested Menu -->
@@ -117,10 +114,10 @@
           <thead class="bg-white text-secondary small text-uppercase fw-bold border-bottom">
             <tr>
               <th class="ps-4 border-0 py-2">Date</th>
-              <th class="border-0 py-2">Recipient/Sender</th>
-              <th class="border-0 py-2">Status</th>
+              <th class="border-0 py-2">Name</th>
               <th class="border-0 py-2">Type</th>
               <th class="border-0 py-2">Amount</th>
+              <th class="border-0 py-2">Status</th>
             </tr>
           </thead>
           <tbody>
@@ -133,18 +130,18 @@
                 <span class="fw-bold text-dark">{{ transaction.holderName }}</span>
               </td>
               <td class="py-2 border-0">
-                <span class="fw-bold small"
-                  [ngClass]="transaction.status === 'SUCCESS' ? 'text-success' : 'text-danger'">
-                  {{ transaction.status === 'SUCCESS' ? 'Success' : 'Failed' }}
-                </span>
-              </td>
-              <td class="py-2 border-0">
                 <span class="text-dark small fw-medium">
                   {{ transaction.type === 'SEND' ? 'Send' : 'Received' }}
                 </span>
               </td>
               <td class="py-2 fw-bold border-0 text-dark">
-                {{ transaction.type === 'RECEIVE' ? '+' : '-' }}&#8377; {{ transaction.amount | number:'1.0-0' }}
+                {{ transaction.amount | currency:'INR' }}
+              </td>
+              <td class="py-2 border-0">
+                <span class="fw-bold small"
+                  [ngClass]="transaction.status === 'SUCCESS' ? 'text-success' : 'text-danger'">
+                  {{ transaction.status === 'SUCCESS' ? 'Success' : 'Failed' }}
+                </span>
               </td>
             </tr>
           </tbody>
