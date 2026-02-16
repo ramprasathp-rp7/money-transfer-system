@@ -83,7 +83,8 @@
                             class="form-label text-dark fw-bold small text-uppercase mb-1">Recipient Account No.</label>
                         <div class="input-group">
                             <span class="input-group-text"><i class="bi bi-person-badge"></i></span>
-                            <input type="text" id="toAccountId" formControlName="toAccountId" name="toAccountId" class="form-control" placeholder="XXXX-XXXX-XXXX">
+                            <input type="text" id="toAccountId" formControlName="toAccountId" accountMask
+                                   name="toAccountId" class="form-control" placeholder="XXXX-XXXX-XXXX">
                         </div>
                         <div class="error-message small text-danger">
                             <div *ngIf="submitted() || transferForm.controls['toAccountId']?.touched">

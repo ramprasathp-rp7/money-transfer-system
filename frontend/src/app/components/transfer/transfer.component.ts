@@ -9,11 +9,12 @@ import { AuthService } from '../../services/auth.service';
 import { AccountService } from 'app/services/account.service';
 import { TransferService } from '../../services/transfer.service';
 import { notEqual } from 'app/validators/matches.validator';
+import { AccountMaskDirective } from 'app/directives/account-mask.directive';
 
 @Component({
     selector: 'app-transfer',
     standalone: true,
-    imports: [ReactiveFormsModule,CommonModule],
+    imports: [ReactiveFormsModule,CommonModule,AccountMaskDirective],
     templateUrl: './transfer.component.html',
     styleUrls: ['./transfer.component.css']
 })

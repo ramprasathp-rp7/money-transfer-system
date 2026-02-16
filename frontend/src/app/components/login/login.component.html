@@ -28,7 +28,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="username" class="form-label fw-bold text-dark">Account No.</label>
-                        <input type="text" id="username" formControlName="username"
+                        <input type="text" id="username" formControlName="username" accountMask inputmode="numeric"
                             class="form-control form-control-lg border-2 shadow-none" placeholder="XXXX-XXXX-XXXX">
                         <div class="error-message text-danger">
                             <div *ngIf="submitted() || loginForm.controls['username']?.touched">
